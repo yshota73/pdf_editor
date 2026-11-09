@@ -121,10 +121,58 @@ body.dropping::after{content:"ここにPDFまたは画像をドロップ";positi
 .mi{display:flex;align-items:center;gap:10px;width:100%;padding:6px 8px;border:0;background:transparent;border-radius:6px;cursor:pointer;text-align:left}
 .mi:hover{background:var(--panel2)}
 .stp{display:inline-block;padding:1px 10px;border:2px solid #d32f2f;border-radius:6px;color:#d32f2f;font-weight:800;line-height:1.3;text-align:center;min-width:76px}
+[hidden]{display:none!important}
+#pages[data-tool="strike"] .ov,#pages[data-tool="replace"] .ov,#pages[data-tool="insert"] .ov,#pages[data-tool="note"] .ov{cursor:crosshair;touch-action:none}
+.author{width:110px;height:30px;border:1px solid var(--line);border-radius:6px;padding:0 8px;background:var(--panel)}
+.mi:disabled{opacity:.4;cursor:default}
+.mi .ck{width:14px;color:var(--accent);font-weight:700}
+.mi-sep{height:1px;background:var(--line);margin:4px 2px}
+.rpanel{width:290px;flex:none;background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.rp-tabs{display:flex;align-items:center;gap:4px;padding:6px 8px;border-bottom:1px solid var(--line)}
+.tab{height:28px;padding:0 10px;border:1px solid transparent;border-radius:6px;background:transparent;cursor:pointer;color:var(--muted)}
+.tab.on{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.rp-body{flex:1;display:flex;flex-direction:column;min-height:0}
+.rp-tools{display:flex;flex-wrap:wrap;gap:4px;padding:6px 8px;border-bottom:1px solid var(--line)}
+.rp-tools select{height:28px;flex:1 1 110px;min-width:0;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+.rp-tools .btn{height:28px;padding:0 8px}
+.rp-tools .btn.ic{width:28px;padding:0}
+.alist{flex:1;overflow:auto;padding:4px}
+.ai{padding:6px 8px;border-radius:6px;cursor:pointer;border:1px solid transparent}
+.ai:hover{background:var(--panel2)}
+.ai.on{border-color:var(--accent);background:var(--accent-soft)}
+.ai.gone{opacity:.5}
+.ai-h{display:flex;gap:6px;align-items:center;font-size:12px}
+.ai-k{font-weight:700}
+.ai-p{margin-left:auto;color:var(--muted);white-space:nowrap}
+.ai-t{white-space:pre-wrap;word-break:break-all;margin-top:2px}
+.ai-m{color:var(--muted);font-size:11px;margin-top:2px}
+.empty-list{color:var(--muted);padding:16px;text-align:center;font-size:12px}
+.modal.wide{width:min(820px,100%)}
+.fm{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:center}
+.fm>label{color:var(--muted);font-size:12px}
+.fm input[type=text],.fm input[type=number],.fm select,.fm textarea{height:30px;border:1px solid var(--line);border-radius:6px;padding:0 8px;background:var(--panel);width:100%;min-width:0}
+.fm textarea{height:auto;min-height:96px;padding:6px 8px}
+.fm .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fm .row input[type=number]{width:84px}
+.fm h5{grid-column:1/-1;margin:8px 0 0;font-size:13px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.fm .muted{grid-column:1/-1;margin:0}
+.pf-sum{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.pf-sum span{padding:2px 10px;border-radius:99px;border:1px solid var(--line);font-size:12px}
+.pf-ok{color:#146c43}.pf-warn{color:#b26a00}.pf-err{color:var(--danger)}
+.pf-tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.pf-tbl th,.pf-tbl td{border-bottom:1px solid var(--line);padding:3px 6px;text-align:left;vertical-align:top}
+.pf-tbl th{color:var(--muted);font-weight:600}
+.diff-pg{margin:10px 0 0;border-top:1px solid var(--line);padding-top:8px}
+.diff-h{display:flex;gap:8px;align-items:center;margin-bottom:4px}
+.diff-h .btn{height:24px;padding:0 8px;font-size:12px}
+.diff-row{font-size:12px;padding:3px 6px;border-radius:4px;background:var(--panel2);margin:3px 0;word-break:break-all}
+.diff-row del{background:#fbd5d5;color:#a11;text-decoration:line-through}
+.diff-row ins{background:#d3f2dc;color:#0b6b2c;text-decoration:none}
 @media (max-width:820px){
   .lb{display:none}
   .fname{display:none}
   .side{position:absolute;z-index:20;left:0;top:0;bottom:0;box-shadow:var(--shadow)}
+  .rpanel{position:absolute;z-index:20;right:0;top:0;bottom:0;box-shadow:var(--shadow);width:min(290px,90vw)}
   .work{position:relative}
 }
 </style>
@@ -136,6 +184,10 @@ body.dropping::after{content:"ここにPDFまたは画像をドロップ";positi
   <button class="btn ic" id="btnSide" title="ページ一覧の表示切替"><i data-ic="panel"></i></button>
   <button class="btn" id="btnOpen" title="PDFを開く (Ctrl+O)"><i data-ic="folder"></i><span class="lb">開く</span></button>
   <button class="btn" id="btnMerge" data-needdoc title="別のPDFを末尾に結合"><i data-ic="layers"></i><span class="lb">結合</span></button>
+  <div class="sep"></div>
+  <button class="btn" id="mProof" data-needdoc data-menu title="校正（注釈一覧・CSV・注釈の統合・版比較）"><i data-ic="list"></i><span class="lb">校正</span><i data-ic="chev"></i></button>
+  <button class="btn" id="mPress" data-needdoc data-menu title="入稿チェック（プリフライト・仕上がり/塗り足し）"><i data-ic="check"></i><span class="lb">入稿</span><i data-ic="chev"></i></button>
+  <button class="btn" id="mDoc" data-needdoc data-menu title="文書（ノンブル・柱・分割・透かし・しおり）"><i data-ic="book"></i><span class="lb">文書</span><i data-ic="chev"></i></button>
   <div class="sep"></div>
   <button class="btn ic" id="btnUndo" title="元に戻す (Ctrl+Z)"><i data-ic="undo"></i></button>
   <button class="btn ic" id="btnRedo" title="やり直し (Ctrl+Y)"><i data-ic="redo"></i></button>
@@ -155,6 +207,7 @@ body.dropping::after{content:"ここにPDFまたは画像をドロップ";positi
   <button class="btn ic" id="btnNext" data-needdoc title="次のページ"><i data-ic="down"></i></button>
   <div class="spacer"></div>
   <span class="fname" id="fname"></span>
+  <input class="author" id="author" placeholder="作成者名" title="注釈に記録する作成者名（著者・編集者・校正者など）">
   <button class="btn" id="btnExtract" data-needdoc title="選択ページ(未選択なら表示中のページ)だけを別PDFとして保存"><i data-ic="scissors"></i><span class="lb">抽出</span></button>
   <button class="btn primary" id="btnSave" data-needdoc title="編集済みPDFを保存 (Ctrl+S)"><i data-ic="download"></i><span class="lb">保存</span></button>
   <button class="btn ic" id="btnHelp" title="使い方・β版の制限"><i data-ic="help"></i></button>
@@ -171,17 +224,23 @@ body.dropping::after{content:"ここにPDFまたは画像をドロップ";positi
   <button class="btn" data-tool="pen" data-needdoc title="フリーハンド (P)"><i data-ic="pencil"></i><span class="lb">手書き</span></button>
   <button class="btn" data-tool="redact" data-needdoc title="墨消し (X) — 保存時に下の文字を完全に削除"><i data-ic="redact"></i><span class="lb">墨消し</span></button>
   <div class="sep"></div>
+  <button class="btn" data-tool="strike" data-needdoc title="トル・削除指示 (D) — 文字の上をドラッグ"><i data-ic="strike"></i><span class="lb">トル</span></button>
+  <button class="btn" data-tool="replace" data-needdoc title="置換指示 (C) — 文字の上をドラッグして正しい文字を入力"><i data-ic="replace"></i><span class="lb">置換</span></button>
+  <button class="btn" data-tool="insert" data-needdoc title="挿入指示 (I) — 挿入位置をクリック"><i data-ic="caret"></i><span class="lb">挿入</span></button>
+  <button class="btn" data-tool="note" data-needdoc title="付箋コメント (N)"><i data-ic="note"></i><span class="lb">付箋</span></button>
+  <div class="sep"></div>
   <button class="btn" id="btnImage" data-needdoc title="画像を挿入"><i data-ic="image"></i><span class="lb">画像</span></button>
   <button class="btn" id="btnSign" data-needdoc title="手書き署名を作成して挿入"><i data-ic="sign"></i><span class="lb">署名</span></button>
   <button class="btn" id="btnStamp" data-needdoc title="スタンプを挿入"><i data-ic="stamp"></i><span class="lb">スタンプ</span></button>
   <div class="sep"></div>
-  <label class="opt" data-for="text highlight rect ellipse line pen">色<input type="color" id="optColor" value="#e11d48"></label>
+  <label class="opt" data-for="text highlight rect ellipse line pen strike replace insert">色<input type="color" id="optColor" value="#e11d48"></label>
   <label class="opt" data-for="rect ellipse"><input type="checkbox" id="optFillOn">塗り<input type="color" id="optFill" value="#ffffff"></label>
   <label class="opt" data-for="rect ellipse line pen">太さ
     <select id="optLw"><option>1</option><option>2</option><option>3</option><option>4</option><option>6</option><option>8</option><option>12</option></select>
   </label>
-  <label class="opt" data-for="text">サイズ<input type="number" id="optSize" min="6" max="200" step="1" value="14"></label>
+  <label class="opt" data-for="text strike replace insert">サイズ<input type="number" id="optSize" min="6" max="200" step="1" value="14"></label>
   <label class="opt" data-for="line"><input type="checkbox" id="optArrow" checked>矢印</label>
+  <label class="opt" data-for="insert"><input type="checkbox" id="optVert">縦組み</label>
   <span class="hint" id="optHint"></span>
 </div>
 
@@ -209,10 +268,41 @@ body.dropping::after{content:"ここにPDFまたは画像をドロップ";positi
           <button class="btn primary" id="btnOpen2"><i data-ic="folder"></i>PDFを開く</button>
           <button class="btn" id="btnNew"><i data-ic="filePlus"></i>空白のPDFを作成</button>
         </div>
-        <ul><li>注釈・図形</li><li>テキスト追加</li><li>署名・スタンプ</li><li>墨消し</li><li>ページ整理</li><li>結合・抽出</li></ul>
+        <ul><li>校正記号・付箋</li><li>注釈一覧・統合</li><li>版比較</li><li>プリフライト</li><li>ノンブル・柱</li><li>しおり</li><li>透かし</li><li>墨消し</li><li>ページ整理</li><li>結合・分割</li></ul>
       </div>
     </div>
   </div>
+  <aside class="rpanel" id="rpanel" hidden>
+    <div class="rp-tabs">
+      <button class="tab on" data-tab="ann">注釈一覧</button>
+      <button class="tab" data-tab="bm">しおり</button>
+      <span class="spacer"></span>
+      <button class="btn ic" id="rpClose" title="パネルを閉じる"><i data-ic="x"></i></button>
+    </div>
+    <div class="rp-body" id="rpAnn">
+      <div class="rp-tools">
+        <select id="annAuthor" title="作成者で絞り込み"></select>
+        <select id="annKind" title="種類で絞り込み"></select>
+      </div>
+      <div class="rp-tools">
+        <button class="btn" id="btnCsv" title="表示中の注釈一覧をCSVで書き出し">CSV</button>
+        <button class="btn" id="btnAnnOut" title="注釈を共有用ファイル(.json)に書き出し">書き出し</button>
+        <button class="btn" id="btnAnnIn" title="他の人が書き出した注釈ファイルを読み込んで統合">読み込み・統合</button>
+      </div>
+      <div class="alist" id="annList"></div>
+    </div>
+    <div class="rp-body" id="rpBm" hidden>
+      <div class="rp-tools">
+        <button class="btn" id="bmAdd" title="表示中のページにしおりを追加"><i data-ic="bookmark"></i>追加</button>
+        <button class="btn ic" id="bmUp" title="上へ"><i data-ic="up"></i></button>
+        <button class="btn ic" id="bmDown" title="下へ"><i data-ic="down"></i></button>
+        <button class="btn ic" id="bmOut" title="階層を上げる"><i data-ic="left"></i></button>
+        <button class="btn ic" id="bmIn" title="階層を下げる"><i data-ic="arrow"></i></button>
+        <button class="btn ic" id="bmDel" title="削除"><i data-ic="trash"></i></button>
+      </div>
+      <div class="alist" id="bmList"></div>
+    </div>
+  </aside>
 </div>
 
 <div class="status">
@@ -223,11 +313,14 @@ body.dropping::after{content:"ここにPDFまたは画像をドロップ";positi
 </div>
 
 <div class="menu" id="stampMenu"></div>
+<div class="menu" id="ddMenu"></div>
 <div class="toast" id="toast" role="status"></div>
 <div class="busy" id="busy"><div><i class="spin"></i><span>処理中…</span></div></div>
 <input type="file" id="fileOpen" accept="application/pdf,.pdf" hidden>
 <input type="file" id="fileMerge" accept="application/pdf,.pdf" multiple hidden>
 <input type="file" id="fileImg" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+<input type="file" id="fileAnn" accept="application/json,.json" multiple hidden>
+<input type="file" id="fileCmp" accept="application/pdf,.pdf" hidden>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
@@ -287,7 +380,18 @@ const ICONS={
  scissors:'<circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/>',
  moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
  help:'<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
- panel:'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/>'
+ panel:'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/>',
+ strike:'<path d="M16 4H9a3 3 0 0 0-2.83 4"/><path d="M14 12a4 4 0 0 1 0 8H6"/><line x1="4" x2="20" y1="12" y2="12"/>',
+ replace:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>',
+ caret:'<path d="m5 18 7-12 7 12"/>',
+ note:'<path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/><path d="M15 3v4a2 2 0 0 0 2 2h4"/>',
+ list:'<path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/>',
+ check:'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+ book:'<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>',
+ bookmark:'<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>',
+ chev:'<path d="m6 9 6 6 6-6"/>',
+ left:'<path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>',
+ x:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'
 };
 const svg=(n,s=16)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]||''}</svg>`;
 $$('[data-ic]').forEach(n=>{n.style.display='inline-flex';n.innerHTML=svg(n.dataset.ic);});
@@ -302,10 +406,25 @@ const S={
   checked:new Set(),
   hist:[], hpos:-1, dirty:false,
   imgs:new Map(), nextId:1, fileName:'document.pdf',
-  colors:{text:'#111111',highlight:'#ffe600',shape:'#e11d48'},
-  lw:2, size:14, fillOn:false, fillColor:'#ffffff', arrow:true,
-  pending:null, clip:null
+  colors:{text:'#111111',highlight:'#ffe600',shape:'#e11d48',proof:'#e60012'},
+  lw:2, sizes:{text:14,proof:10}, fillOn:false, fillColor:'#ffffff', arrow:true, vert:false,
+  pending:null, clip:null,
+  author:'',             // 注釈に記録する作成者名
+  bm:[], bmSel:null,     // しおり {id, title, pid, level}
+  watermark:null,        // {text, color, opacity, size, angle}
+  showBoxes:false, panel:null
 };
+const PROOF=new Set(['strike','replace','insert','note']);     // 校正記号
+const PROOF_LBL=new Set(['strike','replace','insert']);        // 指示文(ラベル)を持つ校正記号
+const NOTE=16;                                                 // 付箋アイコンの大きさ(pt)
+const KIND={text:'テキスト',highlight:'ハイライト',rect:'四角',ellipse:'楕円',line:'線・矢印',pen:'手書き',redact:'墨消し',image:'画像',
+  strike:'トル（削除）',replace:'置換',insert:'挿入',note:'付箋'};
+const stampMeta=a=>{a.author=S.author;a.ts=Date.now();return a;};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad2=n=>String(n).padStart(2,'0');
+const fmtTs=ts=>{if(!ts) return ''; const d=new Date(ts); return `${d.getFullYear()}/${pad2(d.getMonth()+1)}/${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;};
+const mm=pt=>(pt*25.4/72).toFixed(1);
+const MM=v=>v*72/25.4;
 const uid=()=>S.nextId++;
 const clone=o=>JSON.parse(JSON.stringify(o));
 const pageById=id=>S.pages.find(p=>p.id===id);
@@ -334,10 +453,10 @@ function busy(msg){
 function status(msg){$('#stMsg').textContent=msg;}
 const hasModal=()=>!!$('.modal-back');
 
-function modal({title,body,buttons,onOpen}){
+function modal({title,body,buttons,onOpen,wide}){
   return new Promise(res=>{
     const back=document.createElement('div'); back.className='modal-back';
-    const box=document.createElement('div'); box.className='modal';
+    const box=document.createElement('div'); box.className='modal'+(wide?' wide':'');
     box.setAttribute('role','dialog'); box.setAttribute('aria-modal','true');
     const h=document.createElement('h3'); h.textContent=title; box.append(h);
     const mb=document.createElement('div');
@@ -455,10 +574,84 @@ function drawAnnot(ctx,a){
     case 'image': {
       const im=S.imgs.get(a.imgId); if(im&&im.el.complete&&im.el.naturalWidth) ctx.drawImage(im.el,a.x,a.y,a.w,a.h); break;
     }
+    case 'strike': case 'replace':
+      ctx.lineWidth=a.lw||1.2; ctx.strokeStyle=a.color; ctx.lineCap='round'; ctx.beginPath();
+      if(isVert(a)){const cx=a.x+a.w/2; ctx.moveTo(cx,a.y); ctx.lineTo(cx,a.y+a.h);}
+      else {const cy=a.y+a.h/2; ctx.moveTo(a.x,cy); ctx.lineTo(a.x+a.w,cy);}
+      ctx.stroke(); drawLabel(ctx,a); break;
+    case 'insert': {
+      const s=caretSize(a); ctx.lineWidth=a.lw||1.2; ctx.strokeStyle=a.color; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.beginPath();
+      if(a.vert){ctx.moveTo(a.x+s,a.y-s*.7);ctx.lineTo(a.x,a.y);ctx.lineTo(a.x+s,a.y+s*.7);}
+      else {ctx.moveTo(a.x-s*.7,a.y+s);ctx.lineTo(a.x,a.y);ctx.lineTo(a.x+s*.7,a.y+s);}
+      ctx.stroke(); drawLabel(ctx,a); break;
+    }
+    case 'note': {
+      const s=NOTE; ctx.fillStyle='#ffd43b'; ctx.strokeStyle='#a87900'; ctx.lineWidth=1; ctx.lineJoin='round';
+      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(a.x+s,a.y); ctx.lineTo(a.x+s,a.y+s*.7); ctx.lineTo(a.x+s*.7,a.y+s); ctx.lineTo(a.x,a.y+s); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); for(let i=1;i<=3;i++){ctx.moveTo(a.x+3,a.y+i*s/4.5);ctx.lineTo(a.x+s-4,a.y+i*s/4.5);} ctx.stroke(); break;
+    }
+    case 'watermark':
+      ctx.globalAlpha=a.opacity; ctx.fillStyle=a.color; ctx.font=`bold ${a.size}px ${FONT}`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.translate(a.x+a.w/2,a.y+a.h/2); ctx.rotate(-a.angle*Math.PI/180);
+      String(a.text).split('\n').forEach((ln,i,arr)=>ctx.fillText(ln,0,(i-(arr.length-1)/2)*a.size*1.2)); break;
   }
   ctx.restore();
 }
+/* ---- 校正記号の指示文 (縦組みでは縦書きで表示) ---- */
+const isVert=a=>a.h>a.w;
+const caretSize=a=>Math.max(5,a.size*.6);
+function labelBox(a){
+  if(!PROOF_LBL.has(a.type)||!a.text) return null;
+  const lines=String(a.text).split('\n'); mctx.font=`${a.size}px ${FONT}`;
+  const vert=a.type==='insert'?!!a.vert:isVert(a);
+  let w,h;
+  if(vert){w=lines.length*a.size*1.15; h=Math.max(...lines.map(l=>[...l].length))*a.size*1.05;}
+  else {w=Math.max(...lines.map(l=>mctx.measureText(l).width)); h=lines.length*a.size*LH;}
+  w+=4; h+=4;
+  let x,y;
+  if(a.type==='insert'){const s=caretSize(a); if(vert){x=a.x+s+2;y=a.y-h/2;} else {x=a.x-w/2;y=a.y+s+2;}}
+  else if(vert){x=a.x+a.w+3;y=a.y;}
+  else {x=a.x;y=a.y-h-3; if(y<0) y=a.y+a.h+3;}
+  return {x,y,w,h,lines,vert};
+}
+function drawLabel(ctx,a){
+  const L=labelBox(a); if(!L) return;
+  ctx.save(); ctx.fillStyle='rgba(255,255,255,.85)'; ctx.fillRect(L.x,L.y,L.w,L.h);
+  ctx.fillStyle=a.color; ctx.font=`${a.size}px ${FONT}`;
+  if(L.vert){
+    ctx.textAlign='center'; ctx.textBaseline='top';
+    L.lines.forEach((ln,i)=>{const cx=L.x+2+(i+.5)*a.size*1.15; [...ln].forEach((ch,j)=>ctx.fillText(ch,cx,L.y+2+j*a.size*1.05));});
+  } else {
+    ctx.textBaseline='alphabetic'; L.lines.forEach((ln,i)=>ctx.fillText(ln,L.x+2,L.y+2+a.size*ASC+i*a.size*LH));
+  }
+  ctx.restore();
+}
+function unionBox(a,b){
+  if(!b) return a; const x=Math.min(a.x,b.x),y=Math.min(a.y,b.y);
+  return {x,y,w:Math.max(a.x+a.w,b.x+b.w)-x,h:Math.max(a.y+a.h,b.y+b.h)-y};
+}
+const fullBox=a=>(PROOF_LBL.has(a.type)&&a.type!=='insert')?unionBox(bboxOf(a),labelBox(a)):bboxOf(a);
+const wmFor=pg=>S.watermark?{type:'watermark',...S.watermark,x:0,y:0,w:pg.w,h:pg.h}:null;
+function drawNotePop(ctx,a){
+  if(!a.text) return;
+  const sz=10, lines=wrapText(a.text,180,sz); mctx.font=`${sz}px ${FONT}`;
+  const w=Math.max(60,...lines.map(l=>mctx.measureText(l).width))+10, h=lines.length*sz*LH+8+(a.author?sz*LH:0);
+  const x=a.x+NOTE+4, y=a.y;
+  ctx.save(); ctx.fillStyle='#fff8d6'; ctx.strokeStyle='#a87900'; ctx.lineWidth=.8; ctx.fillRect(x,y,w,h); ctx.strokeRect(x,y,w,h);
+  ctx.fillStyle='#333'; ctx.font=`${sz}px ${FONT}`; let yy=y+4+sz*ASC;
+  if(a.author){ctx.fillStyle='#8a6d00'; ctx.fillText(a.author,x+5,yy); yy+=sz*LH; ctx.fillStyle='#333';}
+  lines.forEach(l=>{ctx.fillText(l,x+5,yy); yy+=sz*LH;});
+  ctx.restore();
+}
+function drawBoxes(ctx,pg){
+  const b=pg.boxes; if(!b) return; const u=1/PXPT();
+  ctx.save(); ctx.lineWidth=1.2*u;
+  if(b.bleed){ctx.strokeStyle='#1e6bff'; ctx.setLineDash([6*u,4*u]); ctx.strokeRect(...b.bleed);}
+  if(b.trim){ctx.strokeStyle='#00a651'; ctx.setLineDash([]); ctx.strokeRect(...b.trim);}
+  ctx.restore();
+}
 function bboxOf(a){
+  if(a.type==='insert'){const s=caretSize(a); return unionBox({x:a.x-s,y:a.y-s,w:2*s,h:2*s},labelBox(a));}
   if(a.type==='line') return {x:Math.min(a.x1,a.x2),y:Math.min(a.y1,a.y2),w:Math.abs(a.x1-a.x2),h:Math.abs(a.y1-a.y2)};
   if(a.type==='pen'){
     let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
@@ -469,11 +662,11 @@ function bboxOf(a){
 }
 function handlePoints(a){
   if(a.type==='line') return [[a.x1,a.y1],[a.x2,a.y2]];
-  if(['rect','ellipse','highlight','redact','image','text'].includes(a.type))
+  if(['rect','ellipse','highlight','redact','image','text','strike','replace'].includes(a.type))
     return [[a.x,a.y],[a.x+a.w,a.y],[a.x+a.w,a.y+a.h],[a.x,a.y+a.h]];
   return [];
 }
-const EDGE_TYPES=['rect','ellipse','highlight','redact','text'];
+const EDGE_TYPES=['rect','ellipse','highlight','redact','text','strike','replace'];
 function edgeSegs(a){
   if(!EDGE_TYPES.includes(a.type)) return null;
   const b=bboxOf(a),x1=b.x+b.w,y1=b.y+b.h;
@@ -497,7 +690,7 @@ function hitAnnot(pg,x,y,tol){
       const p=a.points;
       for(let j=0;j<p.length-1;j++) if(distSeg(x,y,p[j][0],p[j][1],p[j+1][0],p[j+1][1])<=tol+a.lw/2) return a;
     } else {
-      const b=bboxOf(a);
+      const b=fullBox(a);
       if(x>=b.x-tol&&x<=b.x+b.w+tol&&y>=b.y-tol&&y<=b.y+b.h+tol) return a;
     }
   }
@@ -607,6 +800,9 @@ function drawOverlay(d,pg){
   const k=PXPT()*d._cs; const [a,b,c,e,f,g]=rotM(pg.rot,pg.w,pg.h);
   ctx.setTransform(a*k,b*k,c*k,e*k,f*k,g*k);
   for(const an of pg.annots) drawAnnot(ctx,an);
+  const wm=wmFor(pg); if(wm) drawAnnot(ctx,wm);
+  if(S.showBoxes) drawBoxes(ctx,pg);
+  if(S.sel&&S.sel.pid===pg.id){const an=pg.annots.find(x=>x.id===S.sel.aid); if(an&&an.type==='note') drawNotePop(ctx,an);}
   if(drag&&drag.mode==='textbox'&&drag.pid===pg.id){
     const u=1/PXPT(); ctx.save(); ctx.strokeStyle='#2350d8'; ctx.lineWidth=1.5*u; ctx.setLineDash([5*u,4*u]);
     ctx.strokeRect(Math.min(drag.ax,drag.x),Math.min(drag.ay,drag.y),Math.abs(drag.x-drag.ax),Math.abs(drag.y-drag.ay)); ctx.restore();
@@ -764,13 +960,13 @@ viewBox.addEventListener('wheel',e=>{
 function commit(){
   S.hist=S.hist.slice(0,S.hpos+1); S.hist.push(JSON.stringify(S.pages));
   if(S.hist.length>80) S.hist.shift();
-  S.hpos=S.hist.length-1; S.dirty=true; updateUI();
+  S.hpos=S.hist.length-1; S.dirty=true; updateUI(); refreshPanel();
 }
 function restore(){
   S.pages=JSON.parse(S.hist[S.hpos]); S.dirty=true; S.sel=null;
   S.checked=new Set([...S.checked].filter(id=>pageById(id)));
   S.cur=Math.min(S.cur,S.pages.length-1);
-  buildPages(); buildThumbs(); updateUI(); syncOptions();
+  buildPages(); buildThumbs(); updateUI(); syncOptions(); refreshPanel();
 }
 function undo(){if(S.hpos>0){S.hpos--;restore();}}
 function redo(){if(S.hpos<S.hist.length-1){S.hpos++;restore();}}
@@ -783,16 +979,22 @@ function select(pid,aid){
   const prev=S.sel; S.sel=pid?{pid,aid}:null;
   if(prev) redrawPage(prev.pid);
   if(S.sel) redrawPage(S.sel.pid);
-  syncOptions();
+  syncOptions(); markAnnSel();
 }
-const groupOf=t=>t==='text'?'text':t==='highlight'?'highlight':'shape';
+const groupOf=t=>t==='text'?'text':t==='highlight'?'highlight':PROOF.has(t)?'proof':'shape';
+const sizeKey=t=>PROOF_LBL.has(t)?'proof':'text';
+const hasSize=a=>a.type==='text'||PROOF_LBL.has(a.type);
 const activeType=()=>{const a=getSel(); return a?a.type:S.tool;};
 const HINTS={
   select:'ダブルクリックでテキスト編集',
   text:'クリックで配置 / ドラッグで枠の大きさを指定 / 選択して四隅・辺をドラッグで大きさ変更',
   redact:'墨消し: 保存時、対象ページは画像化され下の文字も完全に削除されます',
   place:'配置したい位置をクリックしてください',
-  image:'ドラッグで移動、四隅で拡大縮小'
+  image:'ドラッグで移動、四隅で拡大縮小',
+  strike:'削除する文字の上をドラッグ（縦組みは縦にドラッグ）。ダブルクリックで指示文を変更',
+  replace:'直したい文字の上をドラッグし、正しい文字を入力',
+  insert:'挿入位置をクリックし、入れる文字を入力（縦組みは「縦組み」をオン）',
+  note:'クリックした位置に付箋コメントを貼ります。選択すると内容が表示されます'
 };
 function syncOptions(){
   const t=activeType(), a=getSel();
@@ -801,7 +1003,8 @@ function syncOptions(){
   const g=groupOf(t);
   $('#optColor').value=(a&&a.color)?a.color:S.colors[g];
   $('#optLw').value=String((a&&a.lw)||S.lw);
-  $('#optSize').value=(a&&a.type==='text')?a.size:S.size;
+  $('#optSize').value=(a&&hasSize(a))?a.size:S.sizes[sizeKey(t)];
+  $('#optVert').checked=(a&&a.type==='insert')?!!a.vert:S.vert;
   $('#optFillOn').checked=(a&&(a.type==='rect'||a.type==='ellipse'))?!!a.fill:S.fillOn;
   $('#optFill').value=(a&&a.fill)?a.fill:S.fillColor;
   $('#optArrow').checked=(a&&a.type==='line')?!!a.arrow:S.arrow;
@@ -819,7 +1022,8 @@ function optApply(fn,doCommit){
 on('#optColor','input',e=>{const v=e.target.value; S.colors[groupOf(activeType())]=v; optApply(a=>{if('color' in a) a.color=v;},false);});
 on('#optColor','change',()=>{if(getSel()) commit();});
 on('#optLw','change',e=>{const v=+e.target.value; S.lw=v; optApply(a=>{if('lw' in a) a.lw=v;},true);});
-on('#optSize','input',e=>{const v=Math.max(6,Math.min(200,+e.target.value||14)); S.size=v; optApply(a=>{if(a.type==='text') a.size=v;},false);});
+on('#optSize','input',e=>{const v=Math.max(6,Math.min(200,+e.target.value||14)); S.sizes[sizeKey(activeType())]=v; optApply(a=>{if(hasSize(a)) a.size=v;},false);});
+on('#optVert','change',e=>{S.vert=e.target.checked; optApply(a=>{if(a.type==='insert') a.vert=S.vert;},true);});
 on('#optSize','change',()=>{if(getSel()) commit();});
 on('#optFillOn','change',e=>{S.fillOn=e.target.checked; optApply(a=>{if(a.type==='rect'||a.type==='ellipse') a.fill=S.fillOn?S.fillColor:null;},true);});
 on('#optFill','input',e=>{S.fillColor=e.target.value; optApply(a=>{if((a.type==='rect'||a.type==='ellipse')&&a.fill) a.fill=S.fillColor;},false);});
@@ -851,7 +1055,7 @@ function hitHandle(pg,a,ev,d){
   }
   return -1;
 }
-const STICKY=new Set(['pen','highlight']);
+const STICKY=new Set(['pen','highlight','strike','replace','insert','note']);
 function onDown(ev,d){
   if(ev.button!==0) return;
   const pg=pageById(+d.dataset.pid); if(!pg) return;
@@ -874,6 +1078,8 @@ function onDown(ev,d){
     drag={mode:'textbox',pid:pg.id,ax:x,ay:y,x,y};
   } else if(t==='place'){
     ev.preventDefault(); placePending(pg,x,y);
+  } else if(t==='insert'||t==='note'){
+    ev.preventDefault(); addProofPoint(pg.id,x,y,t);
   } else {
     ev.preventDefault(); d._ov.setPointerCapture(ev.pointerId);
     const id=uid(); let a;
@@ -882,8 +1088,9 @@ function onDown(ev,d){
     else if(t==='redact') a={id,type:'redact',x,y,w:0,h:0};
     else if(t==='line') a={id,type:'line',x1:x,y1:y,x2:x,y2:y,color:S.colors.shape,lw:S.lw,arrow:S.arrow};
     else if(t==='pen') a={id,type:'pen',points:[[x,y]],color:S.colors.shape,lw:S.lw};
+    else if(t==='strike'||t==='replace') a={id,type:t,x,y,w:0,h:0,color:S.colors.proof,size:S.sizes.proof,lw:1.2,text:t==='strike'?'トル':''};
     else return;
-    pg.annots.push(a); drag={mode:'create',pid:pg.id,aid:id,ax:x,ay:y};
+    stampMeta(a); pg.annots.push(a); drag={mode:'create',pid:pg.id,aid:id,ax:x,ay:y};
   }
 }
 function onMove(ev,d){
@@ -940,8 +1147,10 @@ function onUp(ev,d){
     let ok=true;
     if(a.type==='line') ok=Math.hypot(a.x2-a.x1,a.y2-a.y1)>3;
     else if(a.type==='pen'){ if(a.points.length===1) a.points.push([a.points[0][0]+.01,a.points[0][1]]); }
+    else if(a.type==='strike'||a.type==='replace'){ ok=Math.max(a.w,a.h)>4; a.w=Math.max(a.w,2); a.h=Math.max(a.h,2); }
     else ok=a.w>2&&a.h>2;
     if(!ok){pg.annots=pg.annots.filter(q=>q.id!==a.id); drawOverlay(d,pg); return;}
+    if(a.type==='replace'){ drawOverlay(d,pg); editProof(pg.id,a.id,true); return; }
     commit();
     if(STICKY.has(S.tool)){ redrawPage(pg.id); }
     else { setTool('select'); select(pg.id,a.id); }
@@ -952,6 +1161,38 @@ function onDbl(ev,d){
   const pg=pageById(+d.dataset.pid); if(!pg) return;
   const [x,y]=ptrBase(ev,d,pg); const a=hitAnnot(pg,x,y,6/PXPT());
   if(a&&a.type==='text') editText(pg.id,a.x,a.y,a);
+  else if(a&&PROOF.has(a.type)) editProof(pg.id,a.id,false);
+}
+
+/* ============================================================
+   校正記号 (トル・置換・挿入・付箋)
+   ============================================================ */
+const PROOF_PH={strike:'指示文（例: トル / トルツメ / トルアキ）',replace:'正しい文字（例: 校正）',insert:'挿入する文字',note:'コメント'};
+async function proofPrompt(type,value,isNew){
+  const ta=document.createElement('textarea'); ta.value=value||''; ta.placeholder=PROOF_PH[type]+'（Ctrl+Enterで確定）';
+  const r=await modal({title:`${KIND[type]}${isNew?'を追加':'を編集'}`,body:ta,
+    buttons:[{label:'キャンセル',value:false},{label:'OK',primary:true,value:true}],onOpen:()=>setTimeout(()=>{ta.focus();ta.select();},30)});
+  return r?ta.value.trim():null;
+}
+async function editProof(pid,aid,isNew){
+  const pg0=pageById(pid), a0=pg0&&pg0.annots.find(q=>q.id===aid); if(!a0) return;
+  const v=await proofPrompt(a0.type,a0.text,isNew);
+  const pg=pageById(pid), a=pg&&pg.annots.find(q=>q.id===aid);
+  if(!a){return;}
+  if(v===null||(!v&&a.type!=='strike')){
+    if(isNew){pg.annots=pg.annots.filter(q=>q!==a); redrawPage(pid);}   // 未確定の新規注釈は破棄 (履歴に積まない)
+    return;
+  }
+  a.text=v||'トル'; redrawPage(pid); commit();
+  if(!isNew) select(pid,aid);
+}
+async function addProofPoint(pid,x,y,type){
+  const v=await proofPrompt(type,'',true); if(!v) return;
+  const pg=pageById(pid); if(!pg) return;
+  const a=type==='note'
+    ?{id:uid(),type,x:Math.max(0,Math.min(pg.w-NOTE,x)),y:Math.max(0,Math.min(pg.h-NOTE,y)),w:NOTE,h:NOTE,text:v}
+    :{id:uid(),type,x,y,w:0,h:0,text:v,color:S.colors.proof,size:S.sizes.proof,lw:1.2,vert:S.vert};
+  stampMeta(a); pg.annots.push(a); redrawPage(pid); commit();
 }
 
 /* ============================================================
@@ -967,7 +1208,7 @@ async function editText(pid,x,y,existing,box){
     const a=pg.annots.find(q=>q.id===existing.id); if(!a) return;
     a.text=ta.value; refitText(a); redrawPage(pid); commit();
   } else {
-    const a={id:uid(),type:'text',x,y,text:ta.value,size:S.size,color:S.colors.text,w:0,h:0};
+    const a=stampMeta({id:uid(),type:'text',x,y,text:ta.value,size:S.sizes.text,color:S.colors.text,w:0,h:0});
     if(box){a.x=box.x;a.y=box.y;a.w=box.w;a.h=box.h;a.fixed=true;}
     refitText(a); pg.annots.push(a); commit();
     setTool('select'); select(pid,a.id);
@@ -997,7 +1238,7 @@ function beginPlace(p){
 }
 function placePending(pg,x,y){
   const p=S.pending; if(!p) return;
-  const a={id:uid(),type:'image',imgId:p.imgId,w:p.w,h:p.h,x:Math.max(0,Math.min(pg.w-p.w,x-p.w/2)),y:Math.max(0,Math.min(pg.h-p.h,y-p.h/2))};
+  const a=stampMeta({id:uid(),type:'image',imgId:p.imgId,w:p.w,h:p.h,x:Math.max(0,Math.min(pg.w-p.w,x-p.w/2)),y:Math.max(0,Math.min(pg.h-p.h,y-p.h/2))});
   pg.annots.push(a); S.pending=null; commit(); setTool('select'); select(pg.id,a.id); status('配置しました');
 }
 async function pickImage(file){
@@ -1027,6 +1268,10 @@ const STAMPS=[
   {label:'至急',lines:()=>[['至急',44]]},
   {label:'写し',lines:()=>[['写し',44]]},
   {label:'要確認',lines:()=>[['要確認',44]]},
+  {label:'校了',lines:()=>[['校了',44]]},
+  {label:'責了',lines:()=>[['責了',44]]},
+  {label:'念校',lines:()=>[['念校',44]]},
+  {label:'責了 (日付入り)',lines:()=>[['責了',34],[today(),24]]},
   {label:'受付 (日付入り)',lines:()=>[['受付',34],[today(),24]]},
   {label:'承認 (日付入り)',lines:()=>[['承認',34],[today(),24]]}
 ];
@@ -1139,21 +1384,61 @@ async function readPdf(file){
     else toast(`「${file.name}」を読み込めませんでした（${e&&e.message||e}）`,'err',6000);
     return null;
   }
+  let lib=null;   // TrimBox/BleedBox の読み取りとプリフライト用 (pdf-lib)
+  try{ lib=await PDFLib.PDFDocument.load(bytes,{ignoreEncryption:true,updateMetadata:false}); }catch(e){console.warn('pdf-lib',e);}
   const info=[];
   for(let i=1;i<=doc.numPages;i++){
     const p=await doc.getPage(i); const vp=p.getViewport({scale:1});
-    info.push({w:vp.width,h:vp.height,intrinsic:((p.rotate%360)+360)%360});
+    let boxes=null; try{ if(lib) boxes=readBoxes(lib.getPage(i-1),vp); }catch(e){}
+    info.push({w:vp.width,h:vp.height,intrinsic:((p.rotate%360)+360)%360,boxes});
     if(i%25===0) busy(`読み込み中… ${i}/${doc.numPages}`);
   }
-  return {name:file.name,bytes,doc,info};
+  return {name:file.name,bytes,doc,info,lib};
+}
+/* PDF座標の TrimBox/BleedBox → ページ基準座標 [x,y,w,h] */
+function readBoxes(lp,vp){
+  const {PDFName,PDFArray}=PDFLib;
+  const r=k=>{
+    const arr=lp.node.lookupMaybe(PDFName.of(k),PDFArray); if(!arr||arr.size()<4) return null;
+    const n=arr.asArray().slice(0,4).map(o=>{const v=lp.doc.context.lookup(o); return v&&v.asNumber?v.asNumber():NaN;});
+    if(n.some(isNaN)) return null;
+    const p1=vp.convertToViewportPoint(n[0],n[1]),p2=vp.convertToViewportPoint(n[2],n[3]);
+    return [Math.min(p1[0],p2[0]),Math.min(p1[1],p2[1]),Math.abs(p2[0]-p1[0]),Math.abs(p2[1]-p1[1])];
+  };
+  const trim=r('TrimBox'),bleed=r('BleedBox');
+  return (trim||bleed)?{trim,bleed}:null;
 }
 function registerPdf(res){
-  const si=S.sources.push({name:res.name,bytes:res.bytes,doc:res.doc})-1;
-  return res.info.map((m,i)=>({id:uid(),src:si,idx:i,w:m.w,h:m.h,intrinsic:m.intrinsic,rot:0,annots:[]}));
+  const si=S.sources.push({name:res.name,bytes:res.bytes,doc:res.doc,lib:res.lib})-1;
+  return res.info.map((m,i)=>({id:uid(),src:si,idx:i,w:m.w,h:m.h,intrinsic:m.intrinsic,rot:0,annots:[],boxes:m.boxes}));
+}
+/* 既存PDFのしおり(アウトライン)を読み込む */
+async function importOutline(doc,pages){
+  const out=[];
+  try{
+    const ol=await doc.getOutline(); if(!ol) return out;
+    const walk=async(items,level)=>{
+      for(const it of items){
+        let pid=null;
+        try{
+          const dest=typeof it.dest==='string'?await doc.getDestination(it.dest):it.dest;
+          if(Array.isArray(dest)&&dest[0]!=null){
+            const idx=typeof dest[0]==='number'?dest[0]:await doc.getPageIndex(dest[0]);
+            if(pages[idx]) pid=pages[idx].id;
+          }
+        }catch(e){}
+        if(pid!=null) out.push({id:uid(),title:it.title||'（無題）',pid,level});
+        if(it.items&&it.items.length) await walk(it.items,pid!=null?level+1:level);
+      }
+    };
+    await walk(ol,0);
+  }catch(e){console.warn('outline',e);}
+  return out;
 }
 function resetDoc(){
   S.sources.forEach(s=>{try{s.doc.destroy();}catch(e){}});
   S.sources=[]; S.pages=[]; S.imgs.clear(); S.checked=new Set(); S.sel=null; S.hist=[]; S.hpos=-1; S.cur=0; S.pending=null;
+  S.bm=[]; S.bmSel=null; S.watermark=null;
   for(const d of pageEls.values()) killEl(d); pageEls=new Map();
   for(const d of thumbEls.values()){tio.unobserve(d);d.remove();} thumbEls=new Map();
 }
@@ -1167,7 +1452,7 @@ async function openFile(file){
   busy('読み込み中…');
   try{
     const res=await readPdf(file); if(!res){busy(false);return;}
-    resetDoc(); S.fileName=file.name; S.pages=registerPdf(res); S.zoom=1; afterLoad();
+    resetDoc(); S.fileName=file.name; S.pages=registerPdf(res); S.bm=await importOutline(res.doc,S.pages); S.zoom=1; afterLoad();
     status(`${res.name} を開きました（${S.pages.length}ページ）`);
   }catch(e){console.error(e);toast('読み込みに失敗しました: '+(e.message||e),'err',6000);}
   busy(false);
@@ -1179,6 +1464,7 @@ async function mergeFiles(files){
     for(const f of files){
       const res=await readPdf(f); if(!res) continue;
       const pgs=registerPdf(res); S.pages.push(...pgs); added+=pgs.length;
+      S.bm.push(...await importOutline(res.doc,pgs));
     }
     if(added){ buildPages(); buildThumbs(); commit(); toast(`${added}ページを末尾に結合しました`,'ok'); gotoPage(S.pages.length-added); }
   }catch(e){console.error(e);toast('結合に失敗しました: '+(e.message||e),'err',6000);}
@@ -1229,13 +1515,44 @@ async function pdfImage(out,cache,imgId){
   const im=S.imgs.get(imgId); const p=im.mime==='image/jpeg'?await out.embedJpg(im.bytes):await out.embedPng(im.bytes);
   cache.set(imgId,p); return p;
 }
-async function drawAnnotsPdf(out,page,pg,helv,cache){
+/* ページ基準座標 → 出力ページのPDF座標 */
+async function natFor(pg,baked){
+  if(baked||pg.src==null) return (x,y)=>[x,pg.h-y];
+  const pj=await S.sources[pg.src].doc.getPage(pg.idx+1); const vp=pj.getViewport({scale:1});
+  return (x,y)=>vp.convertToPdfPoint(x,y);
+}
+const toPdfRect=(nat,r)=>{const p=nat(r[0],r[1]),q=nat(r[0]+r[2],r[1]+r[3]); return [Math.min(p[0],q[0]),Math.min(p[1],q[1]),Math.abs(q[0]-p[0]),Math.abs(q[1]-p[1])];};
+function applyBoxes(page,pg,nat){
+  const b=pg.boxes; if(!b) return;
+  if(b.bleed) page.setBleedBox(...toPdfRect(nat,b.bleed));
+  if(b.trim) page.setTrimBox(...toPdfRect(nat,b.trim));
+}
+/* 注釈をPNG化して貼り付け (日本語の指示文・透かしなど) */
+async function rasterAnnot(out,page,a,nat,rho,key,cache){
+  const b=fullBox(a), pad=2, k=Math.min(a.type==='watermark'?2:4,4096/Math.max(b.w+pad*2,b.h+pad*2));   // 透かしはページ全面なので低めの倍率
+  let png=key&&cache.get(key);
+  if(!png){
+    const c=document.createElement('canvas'); c.width=Math.ceil((b.w+pad*2)*k); c.height=Math.ceil((b.h+pad*2)*k);
+    const ctx=c.getContext('2d'); ctx.scale(k,k); ctx.translate(pad-b.x,pad-b.y); drawAnnot(ctx,a);
+    png=await out.embedPng(await canvasBytes(c,'image/png')); if(key) cache.set(key,png);
+  }
+  const [x,y]=nat(b.x-pad,b.y+b.h+pad);
+  page.drawImage(png,{x,y,width:b.w+pad*2,height:b.h+pad*2,rotate:rho});
+}
+/* 付箋 → PDF標準のテキスト注釈 (Acrobat等のコメント一覧に表示される) */
+function addNoteAnnot(out,page,a,nat){
+  const {PDFHexString,PDFString}=PDFLib;
+  const r=toPdfRect(nat,[a.x,a.y,NOTE,NOTE]);
+  const d=out.context.obj({Type:'Annot',Subtype:'Text',Rect:[r[0],r[1],r[0]+r[2],r[1]+r[3]],
+    Contents:PDFHexString.fromText(a.text||''),T:PDFHexString.fromText(a.author||''),Name:'Comment',C:[1,.83,.23],F:4,
+    M:PDFString.fromDate(new Date(a.ts||Date.now()))});
+  page.node.addAnnot(out.context.register(d));
+}
+async function drawAnnotsPdf(out,page,pg,helv,cache,nat){
   const {degrees,LineCapStyle}=PDFLib;
-  let nat;
-  if(pg.src==null) nat=(x,y)=>[x,pg.h-y];
-  else { const pj=await S.sources[pg.src].doc.getPage(pg.idx+1); const vp=pj.getViewport({scale:1}); nat=(x,y)=>vp.convertToPdfPoint(x,y); }
   const rho=degrees(pg.src==null?0:pg.intrinsic);
-  for(const a of pg.annots){
+  const wm=wmFor(pg);
+  for(const a of wm?[...pg.annots,wm]:pg.annots){
     switch(a.type){
       case 'highlight': { const [x,y]=nat(a.x,a.y+a.h); page.drawRectangle({x,y,width:a.w,height:a.h,color:hexRgb(a.color),opacity:.4,rotate:rho}); break; }
       case 'rect': {
@@ -1281,6 +1598,9 @@ async function drawAnnotsPdf(out,page,pg,helv,cache){
         const im=await pdfImage(out,cache,a.imgId); const [x,y]=nat(a.x,a.y+a.h);
         page.drawImage(im,{x,y,width:a.w,height:a.h,rotate:rho}); break;
       }
+      case 'strike': case 'replace': case 'insert': await rasterAnnot(out,page,a,nat,rho,null,cache); break;
+      case 'watermark': await rasterAnnot(out,page,a,nat,rho,`wm|${pg.w}|${pg.h}`,cache); break;
+      case 'note': addNoteAnnot(out,page,a,nat); break;
     }
   }
 }
@@ -1294,10 +1614,43 @@ async function bakePage(out,pg){
     const vp=pj.getViewport({scale});
     await pj.render({canvasContext:ctx,viewport:vp}).promise;
   }
-  ctx.save(); ctx.scale(scale,scale); for(const a of pg.annots) drawAnnot(ctx,a); ctx.restore();
+  ctx.save(); ctx.scale(scale,scale);
+  for(const a of pg.annots) if(a.type!=='note') drawAnnot(ctx,a);
+  const wm=wmFor(pg); if(wm) drawAnnot(ctx,wm);
+  ctx.restore();
   const img=await out.embedJpg(await canvasBytes(c,'image/jpeg',.92));
   const page=out.addPage([pg.w,pg.h]); page.drawImage(img,{x:0,y:0,width:pg.w,height:pg.h});
   page.setRotation(degrees(pg.rot));
+  const nat=await natFor(pg,true);
+  for(const a of pg.annots) if(a.type==='note') addNoteAnnot(out,page,a,nat);
+  applyBoxes(page,pg,nat);
+}
+/* しおり(アウトライン)を書き込む。list に含まれないページへのしおりは省く */
+function writeOutlines(out,list){
+  const {PDFName,PDFHexString}=PDFLib;
+  const pidx=new Map(list.map((p,i)=>[p.id,i]));
+  const items=S.bm.filter(b=>pidx.has(b.pid)); if(!items.length) return;
+  const ctx=out.context, root={children:[]}, stack=[{node:root,level:-1}];
+  for(const b of items){
+    while(stack.length>1&&stack[stack.length-1].level>=b.level) stack.pop();
+    const node={b,children:[],ref:ctx.nextRef()};
+    stack[stack.length-1].node.children.push(node); stack.push({node,level:b.level});
+  }
+  const count=n=>n.children.reduce((s,c)=>s+1+count(c),0);
+  const emit=(node,parentRef)=>{
+    const kids=node.children;
+    kids.forEach((k,i)=>{
+      const d={Title:PDFHexString.fromText(k.b.title),Parent:parentRef,Dest:[out.getPage(pidx.get(k.b.pid)).ref,'XYZ',null,null,null]};
+      if(i>0) d.Prev=kids[i-1].ref;
+      if(i<kids.length-1) d.Next=kids[i+1].ref;
+      if(k.children.length){d.First=k.children[0].ref; d.Last=k.children[k.children.length-1].ref; d.Count=count(k);}
+      ctx.assign(k.ref,ctx.obj(d)); emit(k,k.ref);
+    });
+  };
+  const rootRef=ctx.nextRef(); emit(root,rootRef);
+  ctx.assign(rootRef,ctx.obj({Type:'Outlines',First:root.children[0].ref,Last:root.children[root.children.length-1].ref,Count:count(root)}));
+  out.catalog.set(PDFName.of('Outlines'),rootRef);
+  out.catalog.set(PDFName.of('PageMode'),PDFName.of('UseOutlines'));
 }
 async function buildPdf(list,progress){
   const {PDFDocument,StandardFonts,degrees}=PDFLib;
@@ -1320,11 +1673,27 @@ async function buildPdf(list,progress){
     let page;
     if(pg.src==null) page=out.addPage([pg.w,pg.h]); else {page=copied.get(pg); out.addPage(page);}
     page.setRotation(degrees((pg.intrinsic+pg.rot)%360));
-    if(pg.annots.length) await drawAnnotsPdf(out,page,pg,helv,cache);
+    const nat=await natFor(pg,false);
+    if(pg.annots.length||S.watermark) await drawAnnotsPdf(out,page,pg,helv,cache,nat);
+    applyBoxes(page,pg,nat);
     await new Promise(r=>setTimeout(r,0));
   }
+  writeOutlines(out,list);
   out.setProducer('PDFワークベンチ β');
   return {bytes:await out.save(),baked};
+}
+async function downloadBytes(filename,bytes,type){
+  const dl=(window.claude&&window.claude.use)?await window.claude.use('downloads'):null;
+  if(dl) await dl.save({filename,data:bytes});
+  else {
+    const blob=new Blob([bytes],{type}); const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=filename; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),4000);
+  }
+}
+const baseName=()=>S.fileName.replace(/\.pdf$/i,'');
+async function saveText(filename,text,type){
+  try{ await downloadBytes(filename,new TextEncoder().encode(text),type); toast(`保存しました: ${filename}`,'ok'); }
+  catch(e){ if(e&&e.code==='declined') toast('保存をキャンセルしました'); else toast('保存できませんでした: '+(e&&(e.message||e.code)||e),'err',6000); }
 }
 async function saveDoc(list,suffix,full){
   if(!libsOk||!list.length) return;
@@ -1332,14 +1701,9 @@ async function saveDoc(list,suffix,full){
   try{ res=await buildPdf(list,(n,t)=>busy(`PDFを生成中… ${n}/${t}`)); }
   catch(e){console.error(e);busy(false);const m=String(e&&e.message||e);toast(/encrypt/i.test(m)?'暗号化(パスワード設定)されたPDFは保存できません。β版では未対応です':'PDFの生成に失敗しました: '+m,'err',7000);return;}
   busy(false);
-  const filename=`${S.fileName.replace(/\.pdf$/i,'')}${suffix}.pdf`;
+  const filename=`${baseName()}${suffix}.pdf`;
   try{
-    const dl=(window.claude&&window.claude.use)?await window.claude.use('downloads'):null;
-    if(dl) await dl.save({filename,data:res.bytes});
-    else {
-      const blob=new Blob([res.bytes],{type:'application/pdf'}); const url=URL.createObjectURL(blob);
-      const a=document.createElement('a'); a.href=url; a.download=filename; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),4000);
-    }
+    await downloadBytes(filename,res.bytes,'application/pdf');
     if(full){S.dirty=false;updateUI();}
     toast(res.baked?`保存しました（墨消しを含む${res.baked}ページは画像化されています）`:`保存しました: ${filename}`,'ok',5000);
   }catch(e){
@@ -1349,6 +1713,591 @@ async function saveDoc(list,suffix,full){
 }
 on('#btnSave','click',()=>saveDoc(S.pages,'_編集済',true));
 on('#btnExtract','click',()=>{const t=targets(); saveDoc(t,`_抽出${t.length}p`,false);});
+
+/* ============================================================
+   右パネル: 注釈一覧 / しおり
+   ============================================================ */
+function setPanel(tab){
+  S.panel=tab; $('#rpanel').hidden=!tab;
+  if(!tab) return;
+  $$('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+  $('#rpAnn').hidden=tab!=='ann'; $('#rpBm').hidden=tab!=='bm';
+  refreshPanel();
+}
+function refreshPanel(){ if(S.panel==='ann') renderAnnList(); else if(S.panel==='bm') renderBmList(); }
+const annText=a=>a.type==='image'?'（画像・署名・スタンプ）':(a.text||'');
+function allAnnots(){const r=[]; S.pages.forEach((pg,i)=>pg.annots.forEach(a=>{if(!a.sys) r.push({pg,i,a});})); return r;}
+function filteredAnnots(list){
+  const fa=$('#annAuthor').value||'*', fk=$('#annKind').value||'*';
+  return list.filter(x=>(fa==='*'||(x.a.author||'')===fa)&&(fk==='*'||x.a.type===fk));
+}
+function renderAnnList(){
+  const list=allAnnots(), fa=$('#annAuthor'), fk=$('#annKind'), va=fa.value, vk=fk.value;
+  const authors=[...new Set(list.map(x=>x.a.author||''))], kinds=[...new Set(list.map(x=>x.a.type))];
+  fa.innerHTML='<option value="*">すべての作成者</option>'+authors.map(n=>`<option value="${esc(n)}">${esc(n||'（作成者なし）')}</option>`).join('');
+  fa.value=authors.includes(va)?va:'*';
+  fk.innerHTML='<option value="*">すべての種類</option>'+kinds.map(k=>`<option value="${k}">${esc(KIND[k]||k)}</option>`).join('');
+  fk.value=kinds.includes(vk)?vk:'*';
+  const rows=filteredAnnots(list);
+  $('#annList').innerHTML=rows.length?rows.map(({pg,i,a})=>{
+    const col=a.color&&PROOF.has(a.type)?a.color:a.type==='note'?'#a87900':'var(--text)';
+    return `<div class="ai" data-pid="${pg.id}" data-aid="${a.id}"><div class="ai-h"><span class="ai-k" style="color:${col}">${esc(KIND[a.type]||a.type)}</span><span class="ai-p">p.${i+1}</span></div>`+
+      (annText(a)?`<div class="ai-t">${esc(annText(a))}</div>`:'')+
+      `<div class="ai-m">${esc(a.author||'')}${a.author&&a.ts?' · ':''}${fmtTs(a.ts)}</div></div>`;
+  }).join(''):'<div class="empty-list">注釈はありません</div>';
+  markAnnSel();
+}
+function markAnnSel(){
+  if(S.panel!=='ann') return;
+  $$('#annList .ai').forEach(e=>e.classList.toggle('on',!!S.sel&&+e.dataset.aid===S.sel.aid));
+}
+on('#annList','click',e=>{
+  const it=e.target.closest('.ai'); if(!it) return;
+  const pid=+it.dataset.pid, i=S.pages.findIndex(p=>p.id===pid); if(i<0) return;
+  gotoPage(i); setTool('select'); select(pid,+it.dataset.aid);
+});
+on('#annAuthor','change',renderAnnList); on('#annKind','change',renderAnnList);
+$$('.tab').forEach(b=>b.addEventListener('click',()=>setPanel(b.dataset.tab)));
+on('#rpClose','click',()=>setPanel(null));
+
+/* ---- 注釈の書き出し・統合 ---- */
+function exportCsv(){
+  const rows=filteredAnnots(allAnnots());
+  if(!rows.length){toast('書き出す注釈がありません','err');return;}
+  const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const lines=[['No','ページ','種類','指示・内容','作成者','日時'].map(q).join(',')];
+  rows.forEach((r,n)=>lines.push([n+1,r.i+1,KIND[r.a.type]||r.a.type,annText(r.a),r.a.author||'',fmtTs(r.a.ts)].map(q).join(',')));
+  saveText(`${baseName()}_注釈一覧.csv`,'\ufeff'+lines.join('\r\n'),'text/csv');
+}
+function exportAnnots(){
+  const items=allAnnots().map(({i,a})=>{const o={page:i,a:clone(a)}; if(a.type==='image'){const im=S.imgs.get(a.imgId); if(im) o.img=im.url;} return o;});
+  if(!items.length){toast('書き出す注釈がありません','err');return;}
+  const data={app:'pdf-workbench',format:1,file:S.fileName,pageCount:S.pages.length,exported:Date.now(),author:S.author,annots:items};
+  saveText(`${baseName()}_注釈${S.author?'_'+S.author:''}.json`,JSON.stringify(data),'application/json');
+}
+async function registerDataUrl(url){
+  const m=/^data:(image\/(?:png|jpeg));base64,/.exec(url); if(!m) return null;
+  const id=uid(), el=new Image(); await new Promise(r=>{el.onload=r;el.onerror=r;el.src=url;});
+  S.imgs.set(id,{mime:m[1],bytes:dataUrlBytes(url),el,url}); return id;
+}
+async function importAnnots(files){
+  const key=a=>{const o={...a}; delete o.id; delete o.imgId; return JSON.stringify(o);};
+  let added=0,dup=0,skip=0,mismatch=false;
+  for(const file of files){
+    let data; try{data=JSON.parse(await file.text());}catch(e){toast(`「${file.name}」を読み込めません`,'err');continue;}
+    if(!data||data.app!=='pdf-workbench'||!Array.isArray(data.annots)){toast(`「${file.name}」は注釈ファイルではありません`,'err');continue;}
+    if(data.pageCount!==S.pages.length) mismatch=true;
+    const imgMap=new Map();
+    for(const it of data.annots){
+      const pg=S.pages[it.page]; if(!pg||!it.a||!KIND[it.a.type]){skip++;continue;}
+      const a=clone(it.a);
+      if(pg.annots.some(q=>key(q)===key(a))){dup++;continue;}
+      a.id=uid();
+      if(a.type==='image'){
+        if(!it.img){skip++;continue;}
+        if(!imgMap.has(it.img)) imgMap.set(it.img,await registerDataUrl(it.img));
+        a.imgId=imgMap.get(it.img); if(a.imgId==null){skip++;continue;}
+      }
+      pg.annots.push(a); added++;
+    }
+  }
+  if(added){redrawAll(); commit(); setPanel('ann');}
+  toast(`${added}件の注釈を統合しました`+(dup?`（重複${dup}件は除外）`:'')+(skip?`（対象外${skip}件）`:'')+(mismatch?'。ページ数が異なるため位置を確認してください':''),added?'ok':'info',6000);
+}
+on('#btnCsv','click',exportCsv); on('#btnAnnOut','click',exportAnnots); on('#btnAnnIn','click',()=>$('#fileAnn').click());
+on('#fileAnn','change',e=>{const fs=[...e.target.files]; e.target.value=''; if(fs.length) importAnnots(fs);});
+
+/* ---- しおり ---- */
+async function promptText(title,value,ph){
+  const inp=document.createElement('input'); inp.type='text'; inp.value=value||''; inp.placeholder=ph||'';
+  inp.style.cssText='width:100%;height:32px;border:1px solid var(--line);border-radius:6px;padding:0 8px;background:var(--panel)';
+  const r=await modal({title,body:inp,buttons:[{label:'キャンセル',value:false},{label:'OK',primary:true,value:true}],
+    onOpen:(b,close)=>{setTimeout(()=>{inp.focus();inp.select();},30); inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();close(true);}});}});
+  return r?inp.value.trim():null;
+}
+function renderBmList(){
+  const box=$('#bmList');
+  if(!S.bm.length){box.innerHTML='<div class="empty-list">しおりはありません。<br>「追加」で表示中のページに作成できます。</div>';return;}
+  box.innerHTML=S.bm.map(b=>{
+    const i=S.pages.findIndex(p=>p.id===b.pid);
+    return `<div class="ai${b.id===S.bmSel?' on':''}${i<0?' gone':''}" data-bid="${b.id}" style="padding-left:${8+b.level*16}px" title="ダブルクリックで名前を変更"><div class="ai-h"><span>${esc(b.title)}</span><span class="ai-p">${i<0?'削除済み':'p.'+(i+1)}</span></div></div>`;
+  }).join('');
+}
+const bmChanged=()=>{S.dirty=true; updateUI(); renderBmList();};
+const bmIdx=()=>S.bm.findIndex(b=>b.id===S.bmSel);
+on('#bmList','click',e=>{
+  const it=e.target.closest('.ai'); if(!it) return; S.bmSel=+it.dataset.bid;
+  const b=S.bm[bmIdx()], i=S.pages.findIndex(p=>p.id===b.pid); if(i>=0) gotoPage(i); renderBmList();
+});
+on('#bmList','dblclick',async e=>{
+  const it=e.target.closest('.ai'); if(!it) return; const b=S.bm.find(x=>x.id===+it.dataset.bid); if(!b) return;
+  const t=await promptText('しおりの名前を変更',b.title); if(t){b.title=t; bmChanged();}
+});
+on('#bmAdd','click',async()=>{
+  const pg=S.pages[S.cur]; if(!pg) return;
+  const t=await promptText('しおりを追加',`${S.cur+1}ページ`,'見出し（例: 第1章 はじめに）'); if(!t) return;
+  let at=S.bm.length;   // ページ順で挿入位置を決める
+  for(let k=0;k<S.bm.length;k++){const i=S.pages.findIndex(p=>p.id===S.bm[k].pid); if(i>S.cur){at=k;break;}}
+  const level=at>0?S.bm[at-1].level:0;
+  const b={id:uid(),title:t,pid:pg.id,level}; S.bm.splice(at,0,b); S.bmSel=b.id; bmChanged();
+});
+on('#bmUp','click',()=>{const k=bmIdx(); if(k>0){[S.bm[k-1],S.bm[k]]=[S.bm[k],S.bm[k-1]]; bmChanged();}});
+on('#bmDown','click',()=>{const k=bmIdx(); if(k>=0&&k<S.bm.length-1){[S.bm[k+1],S.bm[k]]=[S.bm[k],S.bm[k+1]]; bmChanged();}});
+on('#bmIn','click',()=>{const k=bmIdx(); if(k>0&&S.bm[k].level<=S.bm[k-1].level){S.bm[k].level++; bmChanged();}});
+on('#bmOut','click',()=>{const k=bmIdx(); if(k>=0&&S.bm[k].level>0){S.bm[k].level--; bmChanged();}});
+on('#bmDel','click',()=>{const k=bmIdx(); if(k>=0){S.bm.splice(k,1); S.bmSel=null; bmChanged();}});
+
+/* ============================================================
+   版の比較 (初校と再校などのテキスト差分)
+   ============================================================ */
+async function textOf(doc,idx){
+  const p=await doc.getPage(idx+1); const tc=await p.getTextContent();
+  return tc.items.map(it=>(it.str||'')+(it.hasEOL?'\n':'')).join('');
+}
+function diffStr(a,b){
+  const ops=[]; const push=(o,s)=>{if(!s) return; const l=ops[ops.length-1]; if(l&&l[0]===o) l[1]+=s; else ops.push([o,s]);};
+  let p=0; while(p<a.length&&p<b.length&&a[p]===b[p]) p++;
+  let s=0; while(s<a.length-p&&s<b.length-p&&a[a.length-1-s]===b[b.length-1-s]) s++;
+  const A=a.slice(p,a.length-s), B=b.slice(p,b.length-s), n=A.length, m=B.length;
+  push(0,a.slice(0,p));
+  if(n*m>9e6){push(-1,A); push(1,B);}        // 大きすぎる場合は粗い差分
+  else if(n&&m){
+    const W=m+1, dp=new Uint16Array((n+1)*W);
+    for(let i=n-1;i>=0;i--) for(let j=m-1;j>=0;j--)
+      dp[i*W+j]=A[i]===B[j]?dp[(i+1)*W+j+1]+1:Math.max(dp[(i+1)*W+j],dp[i*W+j+1]);
+    let i=0,j=0;
+    while(i<n&&j<m){
+      if(A[i]===B[j]){push(0,A[i]);i++;j++;}
+      else if(dp[(i+1)*W+j]>=dp[i*W+j+1]){push(-1,A[i]);i++;}
+      else {push(1,B[j]);j++;}
+    }
+    push(-1,A.slice(i)); push(1,B.slice(j));
+  } else {push(-1,A); push(1,B);}
+  push(0,a.slice(a.length-s));
+  return ops;
+}
+function toHunks(ops){
+  const H=[]; let cur=null, prev='';
+  ops.forEach(([o,s],k)=>{
+    if(o===0){
+      if(cur&&s.length<3&&k<ops.length-1){cur.del+=s;cur.ins+=s;return;}   // ごく短い一致は前後の変更とまとめる
+      if(cur){cur.after=s.slice(0,12);H.push(cur);cur=null;}
+      prev=s;
+    } else {
+      if(!cur) cur={before:prev.slice(-12),del:'',ins:'',after:''};
+      if(o<0) cur.del+=s; else cur.ins+=s;
+    }
+  });
+  if(cur) H.push(cur);
+  return H;
+}
+async function compareWith(file){
+  if(!hasDoc()) return;
+  busy('比較中…'); let other;
+  try{ other=await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer()),isEvalSupported:false,cMapUrl:CFG.cMapUrl,cMapPacked:true,standardFontDataUrl:CFG.standardFontDataUrl}).promise; }
+  catch(e){busy(false); toast(`「${file.name}」を読み込めませんでした`,'err'); return;}
+  try{
+    const n=Math.max(S.pages.length,other.numPages), res=[]; let total=0;
+    for(let i=0;i<n;i++){
+      busy(`比較中… ${i+1}/${n}`);
+      const pg=S.pages[i];
+      const cur=pg?(pg.src!=null?await textOf(S.sources[pg.src].doc,pg.idx):''):null;
+      const old=i<other.numPages?await textOf(other,i):null;
+      if(cur===null||old===null){res.push({i,only:cur===null?'old':'new'}); total++; continue;}
+      let A=old.replace(/\s+/g,' ').trim(), B=cur.replace(/\s+/g,' ').trim();
+      const nonAscii=((A+B).match(/[^\x00-\x7F]/g)||[]).length;
+      if(nonAscii>(A.length+B.length)*.3){A=A.replace(/\s/g,'');B=B.replace(/\s/g,'');}   // 和文は空白の差を無視
+      if(A===B) continue;
+      const hunks=toHunks(diffStr(A,B)); if(hunks.length){res.push({i,hunks}); total+=hunks.length;}
+    }
+    busy(false); showCompare(file.name,res,total,other.numPages);
+  }catch(e){busy(false); console.error(e); toast('比較に失敗しました: '+(e.message||e),'err',6000);}
+  finally{try{other.destroy();}catch(e){}}
+}
+async function showCompare(name,res,total,oldPages){
+  const cut=s=>s.length>200?s.slice(0,200)+'…':s;
+  let h=`<p>比較元: <b>${esc(name)}</b>（${oldPages}ページ） → 現在の文書（${S.pages.length}ページ）</p>`;
+  h+=total?`<p class="pf-warn">${res.length}ページで ${total}か所の違いが見つかりました。<span class="muted">（<del>赤</del>=削除・<ins>緑</ins>=追加）</span></p>`:'<p class="pf-ok">テキストの違いは見つかりませんでした。</p>';
+  for(const r of res){
+    h+=`<div class="diff-pg"><div class="diff-h"><b>p.${r.i+1}</b>`+(r.only?'':` <span class="muted">${r.hunks.length}か所</span>`)+(S.pages[r.i]?`<button class="btn" data-goto="${r.i}">このページへ</button>`:'')+'</div>';
+    if(r.only==='old') h+='<div class="diff-row">比較元にだけあるページです（削除されたページ）</div>';
+    else if(r.only==='new') h+='<div class="diff-row">現在の文書にだけあるページです（追加されたページ）</div>';
+    else {
+      h+=r.hunks.slice(0,100).map(x=>`<div class="diff-row">…${esc(x.before)}${x.del?`<del>${esc(cut(x.del))}</del>`:''}${x.ins?`<ins>${esc(cut(x.ins))}</ins>`:''}${esc(x.after)}…</div>`).join('');
+      if(r.hunks.length>100) h+=`<div class="muted">ほか ${r.hunks.length-100}か所</div>`;
+    }
+    h+='</div>';
+  }
+  h+='<p class="muted">テキスト情報のないページ（画像だけのスキャンなど）は比較できません。</p>';
+  const v=await modal({title:'版の比較結果',wide:true,body:h,
+    buttons:[{label:'CSVで書き出し',value:'csv'},{label:'閉じる',primary:true,value:true}],
+    onOpen:(box,close)=>box.addEventListener('click',e=>{const b=e.target.closest('[data-goto]'); if(b){close(null); gotoPage(+b.dataset.goto);}})});
+  if(v==='csv'){
+    const q=s=>`"${String(s??'').replace(/"/g,'""')}"`;
+    const lines=[['ページ','種別','前後','削除された文字','追加された文字'].map(q).join(',')];
+    for(const r of res){
+      if(r.only) lines.push([r.i+1,r.only==='old'?'ページ削除':'ページ追加','','',''].map(q).join(','));
+      else r.hunks.forEach(x=>lines.push([r.i+1,x.del&&x.ins?'置換':x.del?'削除':'追加',`${x.before}〓${x.after}`,x.del,x.ins].map(q).join(',')));
+    }
+    saveText(`${baseName()}_版比較.csv`,'\ufeff'+lines.join('\r\n'),'text/csv');
+  }
+}
+on('#fileCmp','change',e=>{const f=e.target.files[0]; e.target.value=''; if(f) compareWith(f);});
+
+/* ============================================================
+   プリフライト (入稿前チェック)
+   ============================================================ */
+const pnm=o=>o instanceof PDFLib.PDFName?(o.decodeText?o.decodeText():o.asString().slice(1)):'';
+const isTrue=o=>!!o&&String(o)==='true';
+async function libDoc(si){
+  const s=S.sources[si]; if(!s.lib) s.lib=await PDFLib.PDFDocument.load(s.bytes,{ignoreEncryption:true,updateMetadata:false});
+  return s.lib;
+}
+function inhRes(node){
+  const {PDFName,PDFDict}=PDFLib; let n=node, guard=0;
+  while(n&&guard++<32){const r=n.lookupMaybe(PDFName.of('Resources'),PDFDict); if(r) return r; n=n.lookupMaybe(PDFName.of('Parent'),PDFDict);}
+  return null;
+}
+function csKind(ctx,o){
+  const {PDFName,PDFArray}=PDFLib; o=ctx.lookup(o);
+  if(o instanceof PDFName){const n=pnm(o); return {k:/RGB/.test(n)?'RGB':/CMYK/.test(n)?'CMYK':/Gray/.test(n)?'Gray':n};}
+  if(o instanceof PDFArray&&o.size()){
+    const f=pnm(ctx.lookup(o.get(0)));
+    if(f==='ICCBased'){const st=ctx.lookup(o.get(1)); const N=st&&st.dict?st.dict.lookup(PDFName.of('N')):null; const n=N&&N.asNumber?N.asNumber():0; return {k:n===3?'RGB':n===4?'CMYK':n===1?'Gray':'ICC'};}
+    if(f==='Indexed') return csKind(ctx,o.get(1));
+    if(f==='Separation') return {k:'Spot',names:[pnm(ctx.lookup(o.get(1)))]};
+    if(f==='DeviceN'){const a=ctx.lookup(o.get(1)); return {k:'Spot',names:a instanceof PDFArray?a.asArray().map(x=>pnm(ctx.lookup(x))):[]};}
+    if(/RGB/.test(f)) return {k:'RGB'}; if(/Gray/.test(f)) return {k:'Gray'};
+    return {k:f};
+  }
+  return {k:'?'};
+}
+function recordCs(R,cs,pno,isImg){
+  if(cs.k==='RGB') (isImg?R.rgbImg:R.rgbCs).add(pno);
+  else if(cs.k==='Lab') R.rgbCs.add(pno);
+  else if(cs.k==='Spot') for(const n of cs.names||[]){
+    if(['Cyan','Magenta','Yellow','Black','None','All',''].includes(n)) continue;
+    if(!R.spot.has(n)) R.spot.set(n,new Set()); R.spot.get(n).add(pno);
+  }
+}
+function fontCheck(fd,pno,R){
+  const {PDFName,PDFDict,PDFArray}=PDFLib;
+  const sub=pnm(fd.lookup(PDFName.of('Subtype'))), base=pnm(fd.lookup(PDFName.of('BaseFont')))||'（名前なし）';
+  const encO=fd.lookup(PDFName.of('Encoding')), enc=pnm(encO);
+  let desc=null, kind=sub;
+  if(sub==='Type0'){
+    const arr=fd.lookupMaybe(PDFName.of('DescendantFonts'),PDFArray), df=arr&&arr.size()?arr.lookup(0,PDFDict):null;
+    if(df){desc=df.lookupMaybe(PDFName.of('FontDescriptor'),PDFDict); kind=pnm(df.lookup(PDFName.of('Subtype')))||'CID';}
+  } else if(sub!=='Type3') desc=fd.lookupMaybe(PDFName.of('FontDescriptor'),PDFDict);
+  let emb=sub==='Type3', fmt=sub==='Type3'?'Type3':'';
+  if(desc){
+    if(desc.has(PDFName.of('FontFile2'))){emb=true;fmt='TrueType';}
+    else if(desc.has(PDFName.of('FontFile3'))){emb=true; const ff=desc.lookup(PDFName.of('FontFile3')); const st=ff&&ff.dict?pnm(ff.dict.lookup(PDFName.of('Subtype'))):''; fmt=st==='OpenType'?'OpenType':'CFF';}
+    else if(desc.has(PDFName.of('FontFile'))){emb=true;fmt='Type1';}
+  }
+  const key=base+'|'+sub; let f=R.fonts.get(key);
+  if(!f){f={base,sub,kind,fmt,emb,cid:sub==='Type0',vert:/-V$/.test(enc),subset:/^[A-Z]{6}\+/.test(base),pages:new Set()}; R.fonts.set(key,f);}
+  f.pages.add(pno);
+}
+function streamText(st){
+  try{
+    let b=null;
+    if(st instanceof PDFLib.PDFRawStream&&PDFLib.decodePDFRawStream) b=PDFLib.decodePDFRawStream(st).decode();
+    else if(st&&st.getContents) b=st.getContents();
+    if(!b) return '';
+    return new TextDecoder('latin1').decode(b.length>8e6?b.subarray(0,8e6):b);
+  }catch(e){return '';}
+}
+const RGB_OP=/(?:^|[\s\]\)>])-?[\d.]+\s+-?[\d.]+\s+-?[\d.]+\s+(?:rg|RG)(?=[\s\/\[\(<]|$)/;
+function scanStream(st,pno,R){ if(RGB_OP.test(streamText(st))) R.rgbVec.add(pno); }
+function scanResources(ctx,res,pno,R,seen,depth){
+  const {PDFName,PDFDict,PDFRef}=PDFLib;
+  if(!res||depth>6) return;
+  const sub=k=>res.lookupMaybe(PDFName.of(k),PDFDict);
+  const fonts=sub('Font');
+  if(fonts) for(const [,v] of fonts.entries()){const fd=ctx.lookup(v); if(fd instanceof PDFDict) fontCheck(fd,pno,R);}
+  const css=sub('ColorSpace');
+  if(css) for(const [,v] of css.entries()) recordCs(R,csKind(ctx,v),pno,false);
+  const gs=sub('ExtGState');
+  if(gs) for(const [,v] of gs.entries()){const d=ctx.lookup(v); if(d instanceof PDFDict&&(isTrue(d.lookup(PDFName.of('OP')))||isTrue(d.lookup(PDFName.of('op'))))) R.overprint.add(pno);}
+  const xo=sub('XObject');
+  if(xo) for(const [,v] of xo.entries()){
+    const key=v instanceof PDFRef?v.toString()+'@'+pno:null; if(key){if(seen.has(key)) continue; seen.add(key);}
+    const st=ctx.lookup(v); if(!st||!st.dict) continue;
+    const t=pnm(st.dict.lookup(PDFName.of('Subtype')));
+    if(t==='Image'){ if(!isTrue(st.dict.lookup(PDFName.of('ImageMask')))) recordCs(R,csKind(ctx,st.dict.lookup(PDFName.of('ColorSpace'))),pno,true); }
+    else if(t==='Form'){ scanResources(ctx,st.dict.lookupMaybe(PDFName.of('Resources'),PDFDict),pno,R,seen,depth+1); scanStream(st,pno,R); }
+  }
+}
+async function scanImageRes(pg,pno,R){
+  const page=await S.sources[pg.src].doc.getPage(pg.idx+1);
+  const ops=await page.getOperatorList(), O=pdfjsLib.OPS;
+  const mul=(a,b)=>[a[0]*b[0]+a[2]*b[1],a[1]*b[0]+a[3]*b[1],a[0]*b[2]+a[2]*b[3],a[1]*b[2]+a[3]*b[3],a[0]*b[4]+a[2]*b[5]+a[4],a[1]*b[4]+a[3]*b[5]+a[5]];
+  let m=[1,0,0,1,0,0]; const stk=[];
+  for(let i=0;i<ops.fnArray.length;i++){
+    const fn=ops.fnArray[i], args=ops.argsArray[i];
+    if(fn===O.save) stk.push(m);
+    else if(fn===O.restore) m=stk.pop()||m;
+    else if(fn===O.transform) m=mul(m,args);
+    else if(fn===O.paintFormXObjectBegin){stk.push(m); if(args[0]&&args[0].length===6) m=mul(m,[...args[0]]);}
+    else if(fn===O.paintFormXObjectEnd) m=stk.pop()||m;
+    else if(fn===O.paintImageXObject||fn===O.paintInlineImageXObject){
+      const w=fn===O.paintImageXObject?args[1]:args[0]&&args[0].width, h=fn===O.paintImageXObject?args[2]:args[0]&&args[0].height;
+      if(!w||!h||w*h<64*64) continue;
+      const sx=Math.hypot(m[0],m[1]), sy=Math.hypot(m[2],m[3]); if(sx<4||sy<4) continue;
+      const ppi=Math.min(w/(sx/72),h/(sy/72));
+      if(ppi<300) R.lowRes.push({pno,w,h,ppi:Math.round(ppi)});
+    }
+  }
+}
+const pageList=set=>{
+  const a=[...set].sort((x,y)=>x-y), out=[];
+  for(let i=0;i<a.length;i++){let j=i; while(j+1<a.length&&a[j+1]===a[j]+1) j++; out.push(j>i?`${a[i]}-${a[j]}`:`${a[i]}`); i=j;}
+  return out.join(', ');
+};
+async function preflight(){
+  if(!hasDoc()) return;
+  const R={fonts:new Map(),rgbImg:new Set(),rgbCs:new Set(),rgbVec:new Set(),spot:new Map(),overprint:new Set(),lowRes:[],noTrim:new Set(),lowBleed:[],sizes:new Map(),errors:[]};
+  busy('プリフライト中…');
+  try{
+    for(let n=0;n<S.pages.length;n++){
+      const pg=S.pages[n], pno=n+1;
+      if(n%5===0) busy(`プリフライト中… ${pno}/${S.pages.length}`);
+      const tb=pg.boxes&&pg.boxes.trim;
+      const sz=tb?`${mm(tb[2])}×${mm(tb[3])}mm（仕上がり）`:`${mm(pg.w)}×${mm(pg.h)}mm`;
+      if(!R.sizes.has(sz)) R.sizes.set(sz,new Set()); R.sizes.get(sz).add(pno);
+      if(!tb) R.noTrim.add(pno);
+      else {
+        const bb=(pg.boxes.bleed)||[0,0,pg.w,pg.h];
+        const bl=Math.min(tb[0]-bb[0],tb[1]-bb[1],(bb[0]+bb[2])-(tb[0]+tb[2]),(bb[1]+bb[3])-(tb[1]+tb[3]));
+        if(bl<MM(3)-.05) R.lowBleed.push(`p.${pno}（${mm(Math.max(0,bl))}mm）`);
+      }
+      if(pg.src==null) continue;
+      try{
+        const lib=await libDoc(pg.src), lp=lib.getPage(pg.idx);
+        scanResources(lib.context,inhRes(lp.node),pno,R,new Set(),0);
+        const c=lp.node.Contents();
+        if(c instanceof PDFLib.PDFArray) c.asArray().forEach(x=>scanStream(lib.context.lookup(x),pno,R)); else if(c) scanStream(c,pno,R);
+      }catch(e){R.errors.push(`p.${pno}: 構造を解析できませんでした（${e.message||e}）`);}
+      try{ await scanImageRes(pg,pno,R); }catch(e){R.errors.push(`p.${pno}: 画像を解析できませんでした`);}
+    }
+  }catch(e){console.error(e); R.errors.push(String(e.message||e));}
+  busy(false);
+  showPreflight(R);
+}
+function showPreflight(R){
+  const fonts=[...R.fonts.values()], noEmb=fonts.filter(f=>!f.emb);
+  const items=[];  // [level, 見出し, 詳細HTML]
+  items.push(noEmb.length?['err',`埋め込まれていないフォント ${noEmb.length}件`,noEmb.map(f=>`${esc(f.base)}（p.${pageList(f.pages)}）`).join('<br>')]:['ok','すべてのフォントが埋め込まれています','']);
+  const low=R.lowRes.filter(x=>x.ppi<300), vlow=low.filter(x=>x.ppi<150);
+  items.push(low.length?[vlow.length?'err':'warn',`解像度の低い画像 ${low.length}件（300ppi未満）`,low.slice(0,50).map(x=>`p.${x.pno}: ${x.w}×${x.h}px → 実効 ${x.ppi}ppi`).join('<br>')+(low.length>50?`<br>ほか ${low.length-50}件`:'')]:['ok','画像の実効解像度は300ppi以上です','']);
+  items.push(R.rgbImg.size?['warn','RGBの画像があります',`p.${pageList(R.rgbImg)}`]:['ok','RGBの画像はありません','']);
+  const rgbOther=new Set([...R.rgbVec,...R.rgbCs]);
+  items.push(rgbOther.size?['warn','RGBで指定された色（文字・図形など）があります',`p.${pageList(rgbOther)}`]:['ok','文字・図形にRGBの色指定はありません','']);
+  if(R.spot.size) items.push(['info',`特色 ${R.spot.size}色`,[...R.spot].map(([n,s])=>`${esc(n)}（p.${pageList(s)}）`).join('<br>')]);
+  if(R.overprint.size) items.push(['info','オーバープリント設定があります（スミノセ・白ノセを確認してください）',`p.${pageList(R.overprint)}`]);
+  items.push(R.noTrim.size?['warn','仕上がり位置（TrimBox）が設定されていないページ',`p.${pageList(R.noTrim)}　<span class="muted">「入稿 → 仕上がり・塗り足しを設定」で設定できます</span>`]:['ok','すべてのページに仕上がり位置（TrimBox）があります','']);
+  if(R.lowBleed.length) items.push(['warn',`塗り足しが3mm未満のページ ${R.lowBleed.length}件`,R.lowBleed.slice(0,50).join('、')]);
+  if(R.sizes.size>1) items.push(['warn','ページサイズが混在しています',[...R.sizes].map(([s,p])=>`${s}: p.${pageList(p)}`).join('<br>')]);
+  R.errors.forEach(e=>items.push(['err','解析エラー',esc(e)]));
+  const cnt=l=>items.filter(i=>i[0]===l).length;
+  const ICON={ok:'✔',warn:'⚠',err:'✖',info:'ℹ'}, CLS={ok:'pf-ok',warn:'pf-warn',err:'pf-err',info:''};
+  let h=`<div class="pf-sum"><span class="pf-err">エラー ${cnt('err')}</span><span class="pf-warn">警告 ${cnt('warn')}</span><span class="pf-ok">OK ${cnt('ok')}</span><span>情報 ${cnt('info')}</span></div>`;
+  h+=items.map(([l,t,d])=>`<div class="pf-sec"><b class="${CLS[l]}">${ICON[l]} ${t}</b>${d?`<div class="muted" style="margin:2px 0 0 18px">${d}</div>`:''}</div>`).join('');
+  if(fonts.length){
+    h+='<h4>使用フォント</h4><table class="pf-tbl"><tr><th>フォント名</th><th>形式</th><th>埋め込み</th><th>ページ</th></tr>'+
+      fonts.map(f=>`<tr><td>${esc(f.base.replace(/^[A-Z]{6}\+/,''))}${f.cid?' <span class="muted">和文/CID</span>':''}${f.vert?' <span class="muted">縦書き</span>':''}</td><td>${esc(f.fmt||f.kind||f.sub)}</td><td class="${f.emb?'pf-ok':'pf-err'}">${f.emb?(f.subset?'サブセット':'完全'):'なし'}</td><td>${pageList(f.pages)}</td></tr>`).join('')+'</table>';
+  }
+  h+='<p class="muted">PDF/X準拠の検証・分版プレビュー・総インキ量(TAC)のチェックは今後対応予定です。</p>';
+  modal({title:'プリフライト結果',wide:true,body:h,buttons:[{label:'閉じる',primary:true,value:true}]});
+}
+
+/* ---- 仕上がり(TrimBox)・塗り足し(BleedBox) ---- */
+const TRIM_PRESETS=[['A4',210,297],['A5',148,210],['A6（文庫判）',105,148],['B5',182,257],['B6',128,182],['四六判',127,188],['新書判',103,182],['菊判',150,220]];
+async function boxesDialog(){
+  const f=document.createElement('div'); f.className='fm';
+  f.innerHTML=`<label>仕上がりサイズ</label><select id="bxSize"><option value="auto">ページサイズから塗り足し分を除く</option>${TRIM_PRESETS.map((p,i)=>`<option value="${i}">${p[0]}（${p[1]}×${p[2]}mm）</option>`).join('')}<option value="custom">サイズを指定</option></select>
+    <label>幅×高さ</label><div class="row"><input type="number" id="bxW" value="148" step="0.1"> × <input type="number" id="bxH" value="210" step="0.1"> mm</div>
+    <label>塗り足し</label><div class="row"><input type="number" id="bxBleed" value="3" min="0" max="20" step="0.5"> mm</div>
+    <label>対象</label><select id="bxWhich"><option value="all">すべてのページ</option><option value="sel">選択ページ（未選択なら表示中のページ）</option></select>
+    <p class="muted">仕上がり位置はページの中央に配置します。保存時に TrimBox / BleedBox として書き込まれます。</p>`;
+  const g=id=>f.querySelector('#'+id);
+  const r=await modal({title:'仕上がり・塗り足しを設定',body:f,buttons:[{label:'キャンセル',value:null},{label:'設定を解除',value:'clear'},{label:'設定',primary:true,value:'ok'}]});
+  if(!r) return;
+  const list=g('bxWhich').value==='all'?S.pages:targets();
+  if(r==='clear'){list.forEach(p=>{p.boxes=null;}); redrawAll(); commit(); toast('仕上がり・塗り足しの設定を解除しました'); return;}
+  const mode=g('bxSize').value, b=MM(Math.max(0,+g('bxBleed').value||0)); let bad=0;
+  for(const pg of list){
+    let tw,th;
+    if(mode==='auto'){tw=pg.w-2*b; th=pg.h-2*b;}
+    else {
+      const [w,h]=mode==='custom'?[+g('bxW').value,+g('bxH').value]:TRIM_PRESETS[+mode].slice(1);
+      tw=MM(w); th=MM(h); if((pg.w>pg.h)!==(tw>th)) [tw,th]=[th,tw];
+    }
+    if(!(tw>0&&th>0)||tw>pg.w+.5||th>pg.h+.5){bad++; continue;}
+    const x=(pg.w-tw)/2, y=(pg.h-th)/2, bx=Math.max(0,x-b), by=Math.max(0,y-b);
+    pg.boxes={trim:[x,y,tw,th],bleed:[bx,by,Math.min(pg.w,x+tw+b)-bx,Math.min(pg.h,y+th+b)-by]};
+  }
+  S.showBoxes=true; redrawAll(); commit();
+  toast(bad?`${list.length-bad}ページに設定しました（${bad}ページは仕上がりサイズがページより大きいため除外）`:`${list.length}ページに設定しました（緑=仕上がり、青=塗り足し）`,bad?'err':'ok',6000);
+}
+
+/* ============================================================
+   ノンブル・柱 / 分割 / 透かし
+   ============================================================ */
+async function folioDialog(){
+  const f=document.createElement('div'); f.className='fm';
+  f.innerHTML=`<h5>ノンブル（ページ番号）</h5>
+    <label>表示</label><div class="row"><label><input type="checkbox" id="fnOn" checked> ノンブルを入れる</label></div>
+    <label>書式</label><select id="fnFmt"><option value="{n}">1</option><option value="- {n} -">- 1 -</option><option value="{n} / {N}">1 / 総数</option><option value="p.{n}">p.1</option></select>
+    <label>位置</label><select id="fnPos"><option value="bc">下・中央</option><option value="bo">下・小口側（外側）</option><option value="to">上・小口側（外側）</option><option value="tc">上・中央</option></select>
+    <label>開始番号</label><input type="number" id="fnStart" value="1">
+    <h5>柱（書名・章名など）</h5>
+    <label>文字</label><input type="text" id="fhText" placeholder="例: 書名 / 第1章 はじめに（空欄なら入れない）">
+    <label>位置</label><select id="fhPos"><option value="to">上・小口側（外側）</option><option value="tc">上・中央</option><option value="bo">下・小口側（外側）</option></select>
+    <label>対象</label><select id="fhWhich"><option value="all">全ページ</option><option value="odd">奇数ページ</option><option value="even">偶数ページ</option></select>
+    <h5>共通</h5>
+    <label>綴じ方向</label><select id="fBind"><option value="L">左綴じ（横組み）</option><option value="R">右綴じ（縦組み）</option></select>
+    <label>対象ページ</label><div class="row"><input type="number" id="fFrom" min="1" max="${S.pages.length}" value="1"> 〜 <input type="number" id="fTo" min="1" max="${S.pages.length}" value="${S.pages.length}"> ページ</div>
+    <label>文字サイズ</label><div class="row"><input type="number" id="fSize" min="5" max="40" value="9"> pt</div>
+    <label>余白</label><div class="row"><input type="number" id="fMargin" min="0" max="50" step="0.5" value="10"> mm（仕上がり線から）</div>
+    <p class="muted">再度適用すると、以前に追加したノンブル・柱は置き換えられます。仕上がり位置（TrimBox）があればその内側に配置します。</p>`;
+  const g=id=>f.querySelector('#'+id);
+  const r=await modal({title:'ノンブル・柱を追加',body:f,buttons:[{label:'キャンセル',value:null},{label:'すべて削除',value:'del'},{label:'適用',primary:true,value:'ok'}]});
+  if(!r) return;
+  let removed=0; S.pages.forEach(p=>{const n=p.annots.length; p.annots=p.annots.filter(a=>a.sys!=='folio'); removed+=n-p.annots.length;});
+  if(r==='del'){S.sel=null; redrawAll(); commit(); toast(`${removed}件のノンブル・柱を削除しました`); return;}
+  const len=S.pages.length, clamp=v=>Math.max(1,Math.min(len,Math.round(+v||1)));
+  const from=clamp(g('fFrom').value)-1, to=Math.max(from,clamp(g('fTo').value)-1);
+  const start=Math.round(+g('fnStart').value||1), size=Math.max(5,Math.min(40,+g('fSize').value||9)), margin=MM(Math.max(0,+g('fMargin').value||0));
+  const bind=g('fBind').value, fnOn=g('fnOn').checked, fmt=g('fnFmt').value, fnPos=g('fnPos').value;
+  const fhText=g('fhText').value.trim(), fhPos=g('fhPos').value, which=g('fhWhich').value;
+  let cnt=0;
+  for(let i=from;i<=to;i++){
+    const pg=S.pages[i], n=start+(i-from), odd=Math.abs(n)%2===1;
+    const outerRight=(bind==='L')===odd;   // 左綴じは奇数=右ページ(外側が右)、右綴じは奇数=左ページ
+    const [ax,ay,aw,ah]=(pg.boxes&&pg.boxes.trim)||[0,0,pg.w,pg.h];
+    const place=(text,pos)=>{
+      const a=stampMeta({id:uid(),type:'text',x:0,y:0,w:0,h:0,text,size,color:'#000000',sys:'folio'}); refitText(a);
+      a.x=pos[1]==='c'?ax+(aw-a.w)/2:(outerRight?ax+aw-margin-a.w:ax+margin);
+      a.y=pos[0]==='t'?ay+margin:ay+ah-margin-a.h;
+      pg.annots.push(a); cnt++;
+    };
+    if(fnOn) place(fmt.replace('{n}',n).replace('{N}',start+(to-from)),fnPos);
+    if(fhText&&(which==='all'||(which==='odd')===odd)) place(fhText,fhPos);
+  }
+  S.sel=null; redrawAll(); commit(); toast(`ノンブル・柱を${cnt}件追加しました`,'ok');
+}
+function parseRanges(text,len){
+  const groups=[], errs=[];
+  text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean).forEach((line,ln)=>{
+    const m=line.match(/^(.*?)([\d\s,，\-–〜~]+)$/); if(!m){errs.push(`${ln+1}行目`);return;}
+    const pages=[]; let ok=true;
+    for(const part of m[2].split(/[,，]/).map(s=>s.trim()).filter(Boolean)){
+      const r=part.match(/^(\d+)\s*(?:[-–〜~]\s*(\d+))?$/); if(!r){ok=false;break;}
+      const a=+r[1], b=r[2]?+r[2]:a; if(a<1||b>len||a>b){ok=false;break;}
+      for(let p=a;p<=b;p++) pages.push(p-1);
+    }
+    if(!ok||!pages.length){errs.push(`${ln+1}行目`);return;}
+    groups.push({name:m[1].trim(),pages});
+  });
+  return {groups,errs};
+}
+async function splitDialog(){
+  const f=document.createElement('div'); f.className='fm';
+  f.innerHTML=`<label>方法</label><select id="spMode"><option value="n">一定のページ数ごと</option><option value="r">範囲を指定（台割）</option></select>
+    <label>ページ数</label><div class="row"><input type="number" id="spN" min="1" value="16"> ページごと</div>
+    <label>範囲</label><textarea id="spR" placeholder="1行に1ファイル（名前は省略可）&#10;表紙 1-4&#10;本文1折 5-20&#10;本文2折 21-36"></textarea>
+    <p class="muted">全${S.pages.length}ページ。分割したファイルは順番にダウンロードされます（注釈・墨消し・しおりも反映）。</p>`;
+  const g=id=>f.querySelector('#'+id);
+  const r=await modal({title:'分割して保存',body:f,buttons:[{label:'キャンセル',value:null},{label:'分割して保存',primary:true,value:'ok'}]});
+  if(!r) return;
+  let groups;
+  if(g('spMode').value==='n'){
+    const n=Math.max(1,Math.round(+g('spN').value||1)); groups=[];
+    for(let i=0;i<S.pages.length;i+=n) groups.push({name:'',pages:[...Array(Math.min(n,S.pages.length-i)).keys()].map(k=>i+k)});
+  } else {
+    const res=parseRanges(g('spR').value,S.pages.length);
+    if(res.errs.length||!res.groups.length){toast(`範囲を読み取れません: ${res.errs.join('、')||'入力がありません'}`,'err',6000);return;}
+    groups=res.groups;
+  }
+  for(let k=0;k<groups.length;k++){
+    const gr=groups[k], sfx=gr.name?`_${gr.name.replace(/[\\/:*?"<>|]/g,'_')}`:`_${String(k+1).padStart(2,'0')}`;
+    await saveDoc(gr.pages.map(i=>S.pages[i]),sfx,false);
+  }
+}
+async function watermarkDialog(){
+  const w=S.watermark||{text:'見本',color:'#d32f2f',opacity:.18,size:120,angle:45};
+  const f=document.createElement('div'); f.className='fm';
+  f.innerHTML=`<label>文字</label><div class="row"><select id="wmPre" style="width:auto">${['見本','校正用','社外秘','複製禁止','SAMPLE','DRAFT'].map(t=>`<option>${t}</option>`).join('')}<option value="">自由入力</option></select><input type="text" id="wmText" style="flex:1;width:auto"></div>
+    <label>色</label><input type="color" id="wmColor">
+    <label>濃さ</label><div class="row"><input type="range" id="wmOp" min="5" max="60"> <span id="wmOpV"></span></div>
+    <label>文字サイズ</label><div class="row"><input type="number" id="wmSize" min="12" max="400"> pt</div>
+    <label>角度</label><div class="row"><input type="number" id="wmAng" min="-90" max="90"> 度</div>
+    <p class="muted">すべてのページの中央に入ります。画面に表示され、保存時にPDFへ書き込まれます。</p>`;
+  const g=id=>f.querySelector('#'+id);
+  g('wmText').value=w.text; g('wmColor').value=w.color; g('wmOp').value=Math.round(w.opacity*100); g('wmSize').value=w.size; g('wmAng').value=w.angle;
+  g('wmPre').value=[...g('wmPre').options].some(o=>o.value===w.text)?w.text:'';
+  const opv=()=>{g('wmOpV').textContent=g('wmOp').value+'%';}; opv();
+  g('wmOp').addEventListener('input',opv);
+  g('wmPre').addEventListener('change',()=>{if(g('wmPre').value) g('wmText').value=g('wmPre').value; else g('wmText').focus();});
+  const r=await modal({title:'透かし',body:f,buttons:[{label:'キャンセル',value:null},{label:'透かしを解除',value:'off'},{label:'適用',primary:true,value:'ok'}]});
+  if(!r) return;
+  if(r==='off') S.watermark=null;
+  else {
+    const text=g('wmText').value.trim(); if(!text){toast('透かしの文字を入力してください','err');return;}
+    S.watermark={text,color:g('wmColor').value,opacity:Math.max(.05,Math.min(.6,+g('wmOp').value/100)),size:Math.max(12,Math.min(400,+g('wmSize').value||120)),angle:Math.max(-90,Math.min(90,+g('wmAng').value||0))};
+  }
+  S.dirty=true; redrawAll(); updateUI(); toast(S.watermark?'透かしを設定しました':'透かしを解除しました');
+}
+
+/* ---- メニュー ---- */
+const MENUS={
+  mProof:()=>[
+    {label:'注釈一覧パネル',check:S.panel==='ann',run:()=>setPanel(S.panel==='ann'?null:'ann')},
+    {label:'注釈一覧をCSVで書き出し',run:exportCsv},
+    '-',
+    {label:'注釈を書き出し（共有用 .json）',run:exportAnnots},
+    {label:'注釈を読み込んで統合…',run:()=>$('#fileAnn').click()},
+    '-',
+    {label:'版を比較（初校・再校など）…',run:()=>$('#fileCmp').click()}
+  ],
+  mPress:()=>[
+    {label:'プリフライトチェック',run:preflight},
+    '-',
+    {label:'仕上がり・塗り足しを設定…',run:boxesDialog},
+    {label:'仕上がり・塗り足しを表示',check:S.showBoxes,run:()=>{S.showBoxes=!S.showBoxes; redrawAll();}}
+  ],
+  mDoc:()=>[
+    {label:'ノンブル・柱を追加…',run:folioDialog},
+    {label:'透かしを設定…',run:watermarkDialog},
+    {label:'分割して保存（台割）…',run:splitDialog},
+    '-',
+    {label:'しおりパネル',check:S.panel==='bm',run:()=>setPanel(S.panel==='bm'?null:'bm')}
+  ]
+};
+function openMenu(btn,items){
+  const m=$('#ddMenu'); m.replaceChildren(); m._owner=btn;
+  for(const it of items){
+    if(it==='-'){const s=document.createElement('div'); s.className='mi-sep'; m.append(s); continue;}
+    const b=document.createElement('button'); b.className='mi'; b.innerHTML='<span class="ck"></span><span></span>';
+    b.firstChild.textContent=it.check?'✓':''; b.lastChild.textContent=it.label;
+    b.addEventListener('click',()=>{m.classList.remove('on'); it.run();}); m.append(b);
+  }
+  const r=btn.getBoundingClientRect();
+  m.style.left=Math.max(4,Math.min(r.left,window.innerWidth-290))+'px'; m.style.top=(r.bottom+4)+'px'; m.classList.add('on');
+}
+$$('[data-menu]').forEach(b=>b.addEventListener('click',e=>{
+  e.stopPropagation(); const m=$('#ddMenu');
+  if(m.classList.contains('on')&&m._owner===b){m.classList.remove('on');return;}
+  openMenu(b,MENUS[b.id]());
+}));
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#ddMenu,[data-menu]')) $('#ddMenu').classList.remove('on');});
+
+/* 作成者名 */
+try{S.author=localStorage.getItem('pdfwb-author')||'';}catch(e){}
+$('#author').value=S.author;
+on('#author','input',e=>{S.author=e.target.value.trim(); try{localStorage.setItem('pdfwb-author',S.author);}catch(_){}});
 
 /* ============================================================
    UI 更新
@@ -1391,18 +2340,28 @@ try{const t=localStorage.getItem('pdfwb-theme'); if(t) document.documentElement.
 
 /* ヘルプ */
 on('#btnHelp','click',()=>modal({title:'PDFワークベンチ β の使い方',body:`
-  <h4>できること</h4>
+  <h4>校正</h4>
+  <ul><li>校正記号: トル（削除）・置換・挿入・付箋。縦組みは縦にドラッグ（挿入は「縦組み」をオン）。ダブルクリックで指示文を編集</li>
+  <li>右上の「作成者名」が各注釈に記録されます</li>
+  <li>校正メニュー: 注釈一覧（作成者・種類で絞り込み）、CSV書き出し、注釈の書き出し/読み込みによる複数人の赤字の統合、版の比較</li>
+  <li>付箋は保存時にPDF標準のコメントとして書き込まれ、Acrobat などでも読めます</li></ul>
+  <h4>入稿・文書</h4>
+  <ul><li>入稿メニュー: プリフライト（フォント埋め込み・画像解像度・RGB・特色・オーバープリント・仕上がり/塗り足し）、TrimBox/BleedBox の設定と表示</li>
+  <li>文書メニュー: ノンブル・柱、透かし（見本・校正用など）、台割に沿った分割保存、しおり</li></ul>
+  <h4>編集</h4>
   <ul><li>注釈: テキスト・ハイライト・四角・楕円・線/矢印・手書き</li>
-  <li>署名（手書き）・スタンプ（社外秘/承認/確認済/日付入りなど）・画像の挿入</li>
+  <li>署名（手書き）・スタンプ（社外秘/承認/校了/責了/日付入りなど）・画像の挿入</li>
   <li>墨消し（保存時にそのページを画像化し、下の文字を完全に削除）</li>
   <li>ページの回転・削除・複製・並べ替え（ドラッグ可）・空白ページ挿入</li>
   <li>PDFの結合、選択ページの抽出、元に戻す/やり直し</li></ul>
   <h4>ショートカット</h4>
   <ul><li><kbd>V</kbd> 選択　<kbd>T</kbd> テキスト　<kbd>H</kbd> ハイライト　<kbd>R</kbd> 四角　<kbd>O</kbd> 楕円　<kbd>L</kbd> 線　<kbd>P</kbd> 手書き　<kbd>X</kbd> 墨消し</li>
+  <li><kbd>D</kbd> トル　<kbd>C</kbd> 置換　<kbd>I</kbd> 挿入　<kbd>N</kbd> 付箋</li>
   <li><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Y</kbd> 元に戻す/やり直し　<kbd>Ctrl</kbd>+<kbd>S</kbd> 保存　<kbd>Ctrl</kbd>+<kbd>O</kbd> 開く</li>
   <li><kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>V</kbd> 注釈のコピー/貼り付け　<kbd>Delete</kbd> 削除　矢印キーで微調整　<kbd>Ctrl</kbd>+ホイールで拡大縮小</li></ul>
   <h4>β版の制限</h4>
-  <ul><li>既存テキストの書き換え、OCR、テキスト検索/選択、フォーム入力、電子署名（証明書）、パスワード設定は未対応です。</li>
+  <ul><li>既存テキストの書き換え、OCR、テキスト検索/選択、フォーム入力、電子署名（証明書）、パスワード設定、PDF/X書き出し、分版プレビューは未対応です。</li>
+  <li>校正記号の指示文・透かしは保存時に画像として埋め込まれます。</li>
   <li>パスワード保護されたPDFは開けません。</li>
   <li>日本語のテキスト注釈は画像として埋め込まれます（ASCII文字のみの場合は文字として保存）。</li>
   <li>墨消しを含むページは画像化されるため、リンクやフォームは失われます。</li>
@@ -1431,7 +2390,7 @@ document.addEventListener('keydown',e=>{
     } return;
   }
   if(mod||e.altKey||!hasDoc()) return;
-  const map={v:'select',t:'text',h:'highlight',r:'rect',o:'ellipse',l:'line',p:'pen',x:'redact'};
+  const map={v:'select',t:'text',h:'highlight',r:'rect',o:'ellipse',l:'line',p:'pen',x:'redact',d:'strike',c:'replace',i:'insert',n:'note'};
   if(map[k]){setTool(map[k]);return;}
   if(e.key==='Escape'){S.pending=null;setTool('select');select(null,null);return;}
   const a=getSel();
@@ -1461,8 +2420,4 @@ if(!libsOk){
 })();
 </script>
 </body>
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> d6bc4df8064b9d5b3dc68658125d5ddef11ff9c5
