@@ -1,0 +1,21 @@
+/* 右パネル（注釈一覧・しおり） */
+.rpanel{width:290px;flex:none;background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.rp-tabs{display:flex;align-items:center;gap:4px;padding:6px 8px;border-bottom:1px solid var(--line)}
+.tab{height:28px;padding:0 10px;border:1px solid transparent;border-radius:6px;background:transparent;cursor:pointer;color:var(--muted)}
+.tab.on{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.rp-body{flex:1;display:flex;flex-direction:column;min-height:0}
+.rp-tools{display:flex;flex-wrap:wrap;gap:4px;padding:6px 8px;border-bottom:1px solid var(--line)}
+.rp-tools select{height:28px;flex:1 1 110px;min-width:0;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+.rp-tools .btn{height:28px;padding:0 8px}
+.rp-tools .btn.ic{width:28px;padding:0}
+.alist{flex:1;overflow:auto;padding:4px}
+.ai{padding:6px 8px;border-radius:6px;cursor:pointer;border:1px solid transparent}
+.ai:hover{background:var(--panel2)}
+.ai.on{border-color:var(--accent);background:var(--accent-soft)}
+.ai.gone{opacity:.5}
+.ai-h{display:flex;gap:6px;align-items:center;font-size:12px}
+.ai-k{font-weight:700}
+.ai-p{margin-left:auto;color:var(--muted);white-space:nowrap}
+.ai-t{white-space:pre-wrap;word-break:break-all;margin-top:2px}
+.ai-m{color:var(--muted);font-size:11px;margin-top:2px}
+.empty-list{color:var(--muted);padding:16px;text-align:center;font-size:12px}

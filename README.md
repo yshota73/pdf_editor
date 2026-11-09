@@ -76,7 +76,77 @@ PDFへの赤字入れから、印刷前のチェック、ページの編集、�
 `index.html` をブラウザ（Chrome / Edge / Safari / Firefox の最新版）で開くだけで使えます。インストールやサーバーは不要です。
 
 - PDFの処理はすべてブラウザ内で行われ、ファイルが外部に送信されることはありません。
-- ライブラリ（pdf.js / pdf-lib）はCDNから読み込みます。社内サーバーに置く場合は `index.html` 冒頭の `CFG` のURLを変更してください。
+- ライブラリ（pdf.js / pdf-lib）はCDNから読み込みます。社内サーバーに置く場合は `js/core/config.js` の `CFG` と、`index.html` の `<script src>` のURLを変更してください。
+
+## ファイル構成
+
+ビルド不要の構成です。`index.html` が `css/` と `js/` のファイルを読み込みます。
+
+```
+index.html                画面のHTMLと、CSS・JSの読み込み
+css/
+  base.css                色（ライト/ダーク）・基本要素・ツールバー・ボタン
+  layout.css              ページ一覧・表示領域・ステータスバー
+  components.css          トースト・処理中表示・ダイアログ・メニュー
+  panel.css               右パネル（注釈一覧・しおり）
+  dialogs.css             入力フォーム・プリフライト・版比較の表示
+  responsive.css          狭い画面向け
+js/
+  core/                   全体の土台
+    config.js             ライブラリのURL・定数・ライブラリ読み込み確認
+    dom.js                $ / on などのDOMヘルパー、トースト・ダイアログ
+    icons.js              アイコン
+    state.js              アプリの状態 S と共通の定数・小さな関数
+    geometry.js           座標変換（ページ基準座標 ⇔ 表示座標）
+  annotations/            注釈そのもの
+    render.js             注釈・校正記号・透かし・仕上がり線の描画
+    shape.js              外接矩形・ハンドル・当たり判定・移動・変形
+  viewer/                 表示
+    pages.js              ページの描画（遅延レンダリング）
+    thumbnails.js         サムネイル
+    navigation.js         ページ移動・拡大縮小
+  editor/                 編集操作
+    history.js            元に戻す・やり直し
+    tools.js              ツール選択・オプション
+    pointer.js            マウス・ペン操作
+    insert.js             テキスト・署名・スタンプ・画像の挿入
+  pages/operations.js     ページの回転・削除・並べ替え・複製・空白ページ
+  io/                     ファイル入出力
+    open.js               開く・結合・新規作成・しおりの読み込み
+    dragdrop.js           ドラッグ＆ドロップ
+    save.js               PDFの生成と保存（注釈・付箋コメント・TrimBox・しおりの書き込み）
+  proof/                  1. 校正
+    marks.js              校正記号（トル・置換・挿入・付箋）の入力
+    annotation-list.js    注釈一覧
+    exchange.js           CSV書き出し・注釈の書き出し/統合
+    compare.js            版の比較
+    author.js             作成者名
+  press/                  3. 印刷前チェック
+    preflight.js          プリフライト
+    boxes.js              仕上がり・塗り足しの設定
+  document/               文書の設定
+    folio.js              ノンブル・柱
+    split.js              分割して保存（台割）
+    watermark.js          透かし
+    bookmarks.js          しおり
+  ui/                     画面全体
+    side-panel.js         右パネルの開閉・タブ
+    menus.js              校正・入稿・文書メニュー
+    update.js             ボタン状態などの画面更新
+    theme.js / help.js / keyboard.js
+  main.js                 起動処理（最後に読み込む）
+```
+
+### 開発時の注意
+
+- JSファイルは `<script>` で順番に読み込まれ、関数や変数をファイル間で共有しています（モジュールではありません）。そのため `index.html` での**読み込み順が重要**です。新しいファイルは、それを使うファイルより前に追加してください。
+- 読み込み時にすぐ実行されるコード（`on('#btn','click',関数名)` など）は、参照する関数が同じファイルか、それより前のファイルで定義されている必要があります。クリック時などに呼ばれる関数は、どのファイルにあっても構いません。
+- 新しい機能は、上の分類に沿ったフォルダに追加します（例: 校正の機能は `js/proof/`、入稿チェックは `js/press/`）。
+- `index.html` はファイルを直接開いても動きますが、ローカルサーバーで確認することもできます。
+
+```bash
+python -m http.server 8765
+```
 
 ## 現在の実装状況（β版）
 

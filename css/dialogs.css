@@ -1,0 +1,21 @@
+/* 機能ダイアログ（入力フォーム・プリフライト・版比較） */
+.fm{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:center}
+.fm>label{color:var(--muted);font-size:12px}
+.fm input[type=text],.fm input[type=number],.fm select,.fm textarea{height:30px;border:1px solid var(--line);border-radius:6px;padding:0 8px;background:var(--panel);width:100%;min-width:0}
+.fm textarea{height:auto;min-height:96px;padding:6px 8px}
+.fm .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fm .row input[type=number]{width:84px}
+.fm h5{grid-column:1/-1;margin:8px 0 0;font-size:13px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.fm .muted{grid-column:1/-1;margin:0}
+.pf-sum{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.pf-sum span{padding:2px 10px;border-radius:99px;border:1px solid var(--line);font-size:12px}
+.pf-ok{color:#146c43}.pf-warn{color:#b26a00}.pf-err{color:var(--danger)}
+.pf-tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.pf-tbl th,.pf-tbl td{border-bottom:1px solid var(--line);padding:3px 6px;text-align:left;vertical-align:top}
+.pf-tbl th{color:var(--muted);font-weight:600}
+.diff-pg{margin:10px 0 0;border-top:1px solid var(--line);padding-top:8px}
+.diff-h{display:flex;gap:8px;align-items:center;margin-bottom:4px}
+.diff-h .btn{height:24px;padding:0 8px;font-size:12px}
+.diff-row{font-size:12px;padding:3px 6px;border-radius:4px;background:var(--panel2);margin:3px 0;word-break:break-all}
+.diff-row del{background:#fbd5d5;color:#a11;text-decoration:line-through}
+.diff-row ins{background:#d3f2dc;color:#0b6b2c;text-decoration:none}

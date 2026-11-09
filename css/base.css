@@ -1,0 +1,56 @@
+/* 色・基本要素・ツールバー・ボタン */
+:root{
+  --bg:#eef0f3; --panel:#ffffff; --panel2:#f6f7f9; --line:#dcdfe5; --text:#1b1f27; --muted:#667085;
+  --accent:#2350d8; --accent-fg:#ffffff; --accent-soft:#dfe7fc; --danger:#c62828; --view:#c9cdd4;
+  --shadow:0 1px 2px rgba(15,20,30,.22),0 8px 22px rgba(15,20,30,.14);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#15181d; --panel:#1e2229; --panel2:#252a33; --line:#333a45; --text:#e8ebf0; --muted:#98a2b3;
+    --accent:#6b8cff; --accent-fg:#0d1220; --accent-soft:#26315a; --danger:#ff7b72; --view:#0f1216;
+    --shadow:0 1px 2px rgba(0,0,0,.6),0 8px 22px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15181d; --panel:#1e2229; --panel2:#252a33; --line:#333a45; --text:#e8ebf0; --muted:#98a2b3;
+  --accent:#6b8cff; --accent-fg:#0d1220; --accent-soft:#26315a; --danger:#ff7b72; --view:#0f1216;
+  --shadow:0 1px 2px rgba(0,0,0,.6),0 8px 22px rgba(0,0,0,.5);
+}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{
+  margin:0;height:100%;display:flex;flex-direction:column;overflow:hidden;
+  background:var(--bg);color:var(--text);
+  font:13px/1.45 "Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+.bar{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--panel);border-bottom:1px solid var(--line);overflow-x:auto;flex:none;scrollbar-width:thin}
+.bar>*{flex:none}
+.brand{display:flex;align-items:center;gap:8px;margin-right:6px;font-size:14px}
+.logo{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:5px;background:var(--accent);color:var(--accent-fg);font-weight:800;font-size:11px;letter-spacing:.02em}
+.beta{font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;border:1px solid var(--accent);color:var(--accent)}
+.sep{width:1px;height:22px;background:var(--line);margin:0 4px}
+.spacer{flex:1 1 auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:30px;padding:0 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);cursor:pointer;white-space:nowrap}
+.btn:hover:not(:disabled){background:var(--panel2);border-color:var(--muted)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.btn.ic{width:30px;padding:0}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);font-weight:700}
+.btn.primary:hover:not(:disabled){background:var(--accent);filter:brightness(1.08)}
+.btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.btn svg{flex:none}
+.fname{max-width:26vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+select,input[type=number],input[type=text]{height:30px;border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:0 6px}
+input[type=number]{width:64px}
+#pgIn{width:52px;text-align:center}
+input[type=color]{width:30px;height:28px;padding:1px;border:1px solid var(--line);border-radius:6px;background:var(--panel);cursor:pointer}
+.opt{display:none;align-items:center;gap:5px;color:var(--muted)}
+.opt.on{display:flex}
+.opt input[type=checkbox]{margin:0}
+.hint{color:var(--muted);font-size:12px;white-space:nowrap}
+[hidden]{display:none!important}
+.author{width:110px;height:30px;border:1px solid var(--line);border-radius:6px;padding:0 8px;background:var(--panel)}
