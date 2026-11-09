@@ -9,7 +9,8 @@ function commit(){
   S.hpos=S.hist.length-1; S.dirty=true; updateUI(); refreshPanel();
 }
 function restore(){
-  S.pages=JSON.parse(S.hist[S.hpos]); S.dirty=true; S.sel=null;
+  if(S.editing){S.editing=null; if(inlineWrap) inlineWrap.remove();}
+  S.pages=JSON.parse(S.hist[S.hpos]); S.dirty=true; S.sel=null; if(S.lasso) clearLasso();
   S.checked=new Set([...S.checked].filter(id=>pageById(id)));
   S.cur=Math.min(S.cur,S.pages.length-1);
   buildPages(); buildThumbs(); updateUI(); syncOptions(); refreshPanel();

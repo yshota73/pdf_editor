@@ -3,22 +3,7 @@
 /* ============================================================
    テキスト / 署名 / スタンプ / 画像
    ============================================================ */
-async function editText(pid,x,y,existing,box){
-  const ta=document.createElement('textarea');
-  ta.value=existing?existing.text:''; ta.placeholder='ここに入力（Ctrl+Enterで確定）';
-  const r=await modal({title:existing?'テキストを編集':'テキストを追加',body:ta,
-    buttons:[{label:'キャンセル',value:false},{label:'OK',primary:true,value:true}],onOpen:()=>setTimeout(()=>ta.focus(),30)});
-  const pg=pageById(pid); if(!r||!pg||!ta.value.trim()) return;
-  if(existing){
-    const a=pg.annots.find(q=>q.id===existing.id); if(!a) return;
-    a.text=ta.value; refitText(a); redrawPage(pid); commit();
-  } else {
-    const a=stampMeta({id:uid(),type:'text',x,y,text:ta.value,size:S.sizes.text,color:S.colors.text,w:0,h:0});
-    if(box){a.x=box.x;a.y=box.y;a.w=box.w;a.h=box.h;a.fixed=true;}
-    refitText(a); pg.annots.push(a); commit();
-    setTool('select'); select(pid,a.id);
-  }
-}
+/* テキストの入力は inline-text.js（ページ上で直接入力） */
 const dataUrlBytes=u=>{const b=atob(u.split(',')[1]);const arr=new Uint8Array(b.length);for(let i=0;i<b.length;i++)arr[i]=b.charCodeAt(i);return arr;};
 async function registerCanvasImage(c,mime='image/png',q=.92){
   const url=c.toDataURL(mime,q); const id=uid(); const el=new Image();
@@ -38,13 +23,14 @@ async function importImageFile(file){
   const pw=Math.min(w*.75,260); return {imgId,w:pw,h:pw*h/w};
 }
 function beginPlace(p){
-  S.pending=p; setTool('place'); $('#optHint').textContent=HINTS.place; setStatus('配置する位置をクリックしてください');
+  setTool('place'); S.pending=p; $('#optHint').textContent=HINTS.place; setStatus('配置する位置をクリックしてください');
   $$('.opt').forEach(o=>o.classList.remove('on'));
 }
 function placePending(pg,x,y){
   const p=S.pending; if(!p) return;
   const a=stampMeta({id:uid(),type:'image',imgId:p.imgId,w:p.w,h:p.h,x:Math.max(0,Math.min(pg.w-p.w,x-p.w/2)),y:Math.max(0,Math.min(pg.h-p.h,y-p.h/2))});
-  pg.annots.push(a); S.pending=null; commit(); setTool('select'); select(pg.id,a.id); setStatus('配置しました');
+  // 同じ画像・スタンプ・署名を続けて配置できるよう、配置待ちのまま残す（Esc か別のツールで終了）
+  pg.annots.push(a); commit(); redrawPage(pg.id); setStatus('配置しました。続けてクリックすると同じものを配置できます（Escで終了）');
 }
 async function pickImage(file){
   try{ busy('画像を読み込み中…'); const p=await importImageFile(file); busy(false); beginPlace(p); }

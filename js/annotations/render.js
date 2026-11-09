@@ -4,8 +4,10 @@
    注釈 描画・当たり判定
    ============================================================ */
 const mctx=document.createElement('canvas').getContext('2d');
-function wrapText(text,width,size){
-  mctx.font=`${size}px ${FONT}`;
+/* テキスト注釈のフォント（太字・斜体を含む） */
+const textFont=a=>`${a.italic?'italic ':''}${a.bold?'bold ':''}${a.size}px ${FONT}`;
+function wrapText(text,width,size,font){
+  mctx.font=font||`${size}px ${FONT}`;
   const out=[];
   for(const para of String(text).split('\n')){
     if(!para){out.push('');continue;}
@@ -27,9 +29,9 @@ function wrapText(text,width,size){
   }
   return out;
 }
-const getLines=a=>a.fixed?wrapText(a.text,Math.max(a.w,4),a.size):String(a.text).split('\n');
+const getLines=a=>a.fixed?wrapText(a.text,Math.max(a.w,4),a.size,textFont(a)):String(a.text).split('\n');
 function measureText(a){
-  const lines=getLines(a); mctx.font=`${a.size}px ${FONT}`; let w=0;
+  const lines=getLines(a); mctx.font=textFont(a); let w=0;
   for(const l of lines) w=Math.max(w,mctx.measureText(l).width);
   return {w:a.fixed?a.w:Math.max(w,4),h:lines.length*a.size*LH};
 }
@@ -41,6 +43,11 @@ function drawAnnot(ctx,a){
   ctx.save();
   switch(a.type){
     case 'highlight': ctx.globalAlpha=.4; ctx.fillStyle=a.color; ctx.fillRect(a.x,a.y,a.w,a.h); break;
+    case 'marker':   // 1本の線として描くので、重なった所も濃くならない
+      ctx.globalAlpha=.4; ctx.lineCap='butt'; ctx.lineJoin='round'; ctx.lineWidth=a.lw; ctx.strokeStyle=a.color;
+      ctx.beginPath(); a.points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
+      if(a.points.length===1) ctx.lineTo(a.points[0][0]+.01,a.points[0][1]);
+      ctx.stroke(); break;
     case 'redact': ctx.fillStyle='#000'; ctx.fillRect(a.x,a.y,a.w,a.h); break;
     case 'rect':
       if(a.fill){ctx.fillStyle=a.fill;ctx.fillRect(a.x,a.y,a.w,a.h);}
@@ -59,8 +66,15 @@ function drawAnnot(ctx,a){
       ctx.beginPath(); a.points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
       ctx.stroke(); break;
     case 'text':
-      ctx.fillStyle=a.color; ctx.font=`${a.size}px ${FONT}`; ctx.textBaseline='alphabetic';
-      getLines(a).forEach((ln,i)=>ctx.fillText(ln,a.x,a.y+a.size*ASC+i*a.size*LH)); break;
+      ctx.fillStyle=a.color; ctx.font=textFont(a); ctx.textBaseline='alphabetic';
+      getLines(a).forEach((ln,i)=>{
+        const by=a.y+a.size*ASC+i*a.size*LH; ctx.fillText(ln,a.x,by);
+        if((a.underline||a.strikeout)&&ln){   // 下線は基準線の少し下、取り消し線は文字の高さの中ほど
+          const w=ctx.measureText(ln).width, t=Math.max(.6,a.size*(a.bold?.08:.055));
+          if(a.underline) ctx.fillRect(a.x,by+a.size*.12,w,t);
+          if(a.strikeout) ctx.fillRect(a.x,by-a.size*.32-t/2,w,t);
+        }
+      }); break;
     case 'image': {
       const im=S.imgs.get(a.imgId); if(im&&im.el.complete&&im.el.naturalWidth) ctx.drawImage(im.el,a.x,a.y,a.w,a.h); break;
     }
@@ -122,11 +136,13 @@ function unionBox(a,b){
 }
 const fullBox=a=>(PROOF_LBL.has(a.type)&&a.type!=='insert')?unionBox(bboxOf(a),labelBox(a)):bboxOf(a);
 const wmFor=pg=>S.watermark?{type:'watermark',...S.watermark,x:0,y:0,w:pg.w,h:pg.h}:null;
-function drawNotePop(ctx,a){
+function drawNotePop(ctx,a,pg){
   if(!a.text) return;
   const sz=10, lines=wrapText(a.text,180,sz); mctx.font=`${sz}px ${FONT}`;
   const w=Math.max(60,...lines.map(l=>mctx.measureText(l).width))+10, h=lines.length*sz*LH+8+(a.author?sz*LH:0);
-  const x=a.x+NOTE+4, y=a.y;
+  // ページの外にはみ出す場合は付箋の左側・上側に寄せる
+  let x=a.x+NOTE+4, y=a.y;
+  if(pg){ if(x+w>pg.w&&a.x-4-w>=0) x=a.x-4-w; else if(x+w>pg.w) x=Math.max(0,pg.w-w); if(y+h>pg.h) y=Math.max(0,pg.h-h); }
   ctx.save(); ctx.fillStyle='#fff8d6'; ctx.strokeStyle='#a87900'; ctx.lineWidth=.8; ctx.fillRect(x,y,w,h); ctx.strokeRect(x,y,w,h);
   ctx.fillStyle='#333'; ctx.font=`${sz}px ${FONT}`; let yy=y+4+sz*ASC;
   if(a.author){ctx.fillStyle='#8a6d00'; ctx.fillText(a.author,x+5,yy); yy+=sz*LH; ctx.fillStyle='#333';}

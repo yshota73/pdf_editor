@@ -6,7 +6,7 @@
 function bboxOf(a){
   if(a.type==='insert'){const s=caretSize(a); return unionBox({x:a.x-s,y:a.y-s,w:2*s,h:2*s},labelBox(a));}
   if(a.type==='line') return {x:Math.min(a.x1,a.x2),y:Math.min(a.y1,a.y2),w:Math.abs(a.x1-a.x2),h:Math.abs(a.y1-a.y2)};
-  if(a.type==='pen'){
+  if(a.type==='pen'||a.type==='marker'){
     let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
     for(const p of a.points){x0=Math.min(x0,p[0]);y0=Math.min(y0,p[1]);x1=Math.max(x1,p[0]);y1=Math.max(y1,p[1]);}
     return {x:x0,y:y0,w:x1-x0,h:y1-y0};
@@ -39,8 +39,9 @@ function hitAnnot(pg,x,y,tol){
   for(let i=pg.annots.length-1;i>=0;i--){
     const a=pg.annots[i];
     if(a.type==='line'){ if(distSeg(x,y,a.x1,a.y1,a.x2,a.y2)<=tol+a.lw/2) return a; }
-    else if(a.type==='pen'){
+    else if(a.type==='pen'||a.type==='marker'){
       const p=a.points;
+      if(p.length===1&&Math.hypot(x-p[0][0],y-p[0][1])<=tol+a.lw/2) return a;
       for(let j=0;j<p.length-1;j++) if(distSeg(x,y,p[j][0],p[j][1],p[j+1][0],p[j+1][1])<=tol+a.lw/2) return a;
     } else {
       const b=fullBox(a);
@@ -51,7 +52,7 @@ function hitAnnot(pg,x,y,tol){
 }
 function moveAnnot(a,o,dx,dy){
   if(a.type==='line'){a.x1=o.x1+dx;a.y1=o.y1+dy;a.x2=o.x2+dx;a.y2=o.y2+dy;}
-  else if(a.type==='pen'){a.points=o.points.map(p=>[p[0]+dx,p[1]+dy]);}
+  else if(a.type==='pen'||a.type==='marker'){a.points=o.points.map(p=>[p[0]+dx,p[1]+dy]);}
   else {a.x=o.x+dx;a.y=o.y+dy;}
 }
 function doResize(a,o,hi,x,y){

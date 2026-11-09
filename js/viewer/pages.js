@@ -43,11 +43,12 @@ function activate(d){
   d._base.style.height=d._ov.style.height=ch+'px';
   drawOverlay(d,pg);
   if(pg.src!=null) rq=rq.then(()=>renderBase(d,pg.id,tok)).catch(()=>{});
+  ensureTextLayer(d);
 }
 function deactivate(d){
   if(!d._active) return;
   d._active=false; d._tok++; d._done=false;
-  dropPlaceholder(d);
+  dropPlaceholder(d); dropTextLayer(d);
   try{d._task&&d._task.cancel();}catch(e){}
   d._task=null;
   d._base.width=d._base.height=0; d._ov.width=d._ov.height=0;
@@ -72,16 +73,22 @@ function drawOverlay(d,pg){
   ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,ov.width,ov.height);
   const k=PXPT()*d._cs; const [a,b,c,e,f,g]=rotM(pg.rot,pg.w,pg.h);
   ctx.setTransform(a*k,b*k,c*k,e*k,f*k,g*k);
-  for(const an of pg.annots) drawAnnot(ctx,an);
+  for(const an of pg.annots) if(!(S.editing&&S.editing.aid===an.id)) drawAnnot(ctx,an);   // 入力中のテキストは入力欄で見せる
+  for(const an of pg.annots) if(an.draft&&isEmptyText(an)&&!(S.editing&&S.editing.aid===an.id)) drawTextPlaceholder(ctx,an);
   const wm=wmFor(pg); if(wm) drawAnnot(ctx,wm);
   if(S.showBoxes) drawBoxes(ctx,pg);
   drawEraserCursor(ctx,pg);
-  if(S.sel&&S.sel.pid===pg.id){const an=pg.annots.find(x=>x.id===S.sel.aid); if(an&&an.type==='note') drawNotePop(ctx,an);}
+  // 付箋のコメント: 常に表示 / 選択中 / マウスを重ねている付箋
+  const showIds=new Set();
+  if(S.sel&&S.sel.pid===pg.id) showIds.add(S.sel.aid);
+  if(S.hoverNote&&S.hoverNote.pid===pg.id) showIds.add(S.hoverNote.aid);
+  for(const an of pg.annots) if(an.type==='note'&&(S.showNotes||showIds.has(an.id))) drawNotePop(ctx,an,pg);
   if(drag&&drag.mode==='textbox'&&drag.pid===pg.id){
     const u=1/PXPT(); ctx.save(); ctx.strokeStyle='#2350d8'; ctx.lineWidth=1.5*u; ctx.setLineDash([5*u,4*u]);
     ctx.strokeRect(Math.min(drag.ax,drag.x),Math.min(drag.ay,drag.y),Math.abs(drag.x-drag.ax),Math.abs(drag.y-drag.ay)); ctx.restore();
   }
-  if(S.sel&&S.sel.pid===pg.id){const an=pg.annots.find(x=>x.id===S.sel.aid); if(an) drawSel(ctx,d,pg,an);}
+  drawLasso(ctx,d,pg);
+  if(S.sel&&S.sel.pid===pg.id&&!(S.editing&&S.editing.aid===S.sel.aid)){const an=pg.annots.find(x=>x.id===S.sel.aid); if(an) drawSel(ctx,d,pg,an);}
 }
 function drawSel(ctx,d,pg,a){
   ctx.save(); ctx.setTransform(1,0,0,1,0,0);
@@ -89,7 +96,7 @@ function drawSel(ctx,d,pg,a){
   ctx.strokeStyle='#2350d8'; ctx.fillStyle='#fff'; ctx.lineWidth=1.5*cs; ctx.setLineDash([5*cs,4*cs]);
   const hp=handlePoints(a);
   if(a.type!=='line'){
-    const b=bboxOf(a), pad=(a.type==='pen')?3:0;
+    const b=bboxOf(a), pad=a.type==='pen'?3:a.type==='marker'?a.lw/2:0;
     const cn=[[b.x-pad,b.y-pad],[b.x+b.w+pad,b.y-pad],[b.x+b.w+pad,b.y+b.h+pad],[b.x-pad,b.y+b.h+pad]].map(p=>P(p[0],p[1]));
     ctx.beginPath(); cn.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.stroke();
   }
@@ -112,6 +119,16 @@ function takePlaceholder(old,pg){
   if(old._done){old._base=document.createElement('canvas'); old._done=false;} else old._ph=null;
   return ph;
 }
+/* ---- 横位置: 拡大縮小しても自動で中央に戻さず、ページを置いた位置を保つ ---- */
+const PADX=18;
+let padX=null;   // ページ列の左余白(px)。null のときは中央に置く
+const colWidth=()=>{let w=0; for(const d of pageEls.values()) w=Math.max(w,parseFloat(d.style.width)||0); return w;};
+function layoutX(){
+  const free=viewBox.clientWidth-colWidth()-PADX*2;   // 画面に収まるときの左右の余白の合計
+  const L=free<=0?PADX:PADX+(padX==null?free/2:Math.min(free,Math.max(0,padX-PADX)));
+  pagesBox.style.paddingLeft=L+'px';
+}
+new ResizeObserver(()=>layoutX()).observe(viewBox);
 function redrawPage(pid){const d=pageEls.get(pid),pg=pageById(pid); if(d&&pg) drawOverlay(d,pg);}
 function redrawAll(){for(const [id] of pageEls) redrawPage(id);}
 
@@ -128,5 +145,7 @@ function buildPages(){
   });
   for(const [id,d] of pageEls) if(!next.has(id)) killEl(d);
   pageEls=next; pagesBox.replaceChildren(frag);
+  pagesBox.style.setProperty('--z',S.zoom); layoutX();
+  if(S.editing) mountInline();   // 拡大縮小しても入力を続けられる
   for(const [id,d] of pageEls) if(d._active) redrawPage(id);
 }

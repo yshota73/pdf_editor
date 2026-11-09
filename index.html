@@ -24,7 +24,7 @@
     <div class="grp">
       <button class="btn" id="mProof" data-needdoc data-menu title="校正（注釈一覧・CSV・注釈の統合・版比較）"><i data-ic="list"></i><span class="lb">校正</span><i data-ic="chev"></i></button>
       <button class="btn" id="mPress" data-needdoc data-menu title="入稿チェック（プリフライト・仕上がり/塗り足し）"><i data-ic="check"></i><span class="lb">入稿</span><i data-ic="chev"></i></button>
-      <button class="btn" id="mDoc" data-needdoc data-menu title="文書（ノンブル・柱・分割・透かし・しおり）"><i data-ic="book"></i><span class="lb">文書</span><i data-ic="chev"></i></button>
+      <button class="btn" id="mDoc" data-needdoc data-menu title="文書（ノンブル・柱・分割・透かし・しおり・文字の読み取り）"><i data-ic="book"></i><span class="lb">文書</span><i data-ic="chev"></i></button>
     </div>
     <div class="grp">
       <button class="btn ic" id="btnUndo" title="元に戻す (Ctrl+Z)"><i data-ic="undo"></i></button>
@@ -61,8 +61,10 @@
   <div class="bar-row">
     <div class="grp">
       <button class="btn active" data-tool="select" data-needdoc title="選択・移動 (V)"><i data-ic="pointer"></i><span class="lb">選択</span></button>
-      <button class="btn" data-tool="text" data-needdoc title="テキスト (T)"><i data-ic="type"></i><span class="lb">テキスト</span></button>
-      <button class="btn" data-tool="highlight" data-needdoc title="ハイライト (H)"><i data-ic="highlighter"></i><span class="lb">ハイライト</span></button>
+      <button class="btn" data-tool="textsel" data-needdoc title="文字選択 (S) — ドラッグで文字を選択し Ctrl+C でコピー"><i data-ic="textsel"></i><span class="lb">文字選択</span></button>
+      <button class="btn" data-tool="lasso" data-needdoc title="投げ縄 (Q) — 囲んだ注釈をまとめて移動・複製・コピー・削除"><i data-ic="lasso"></i><span class="lb">投げ縄</span></button>
+      <button class="btn" data-tool="text" data-needdoc title="テキストボックスを置く (T) — 中をクリックして入力"><i data-ic="type"></i><span class="lb">テキスト</span></button>
+      <button class="btn" data-tool="highlight" data-needdoc title="マーカー (H) — なぞって線を引く。引いた所で止めると直線"><i data-ic="highlighter"></i><span class="lb">マーカー</span></button>
       <button class="btn" data-tool="rect" data-needdoc title="四角形 (R)"><i data-ic="square"></i><span class="lb">四角</span></button>
       <button class="btn" data-tool="ellipse" data-needdoc title="楕円 (O)"><i data-ic="circle"></i><span class="lb">楕円</span></button>
       <button class="btn" data-tool="line" data-needdoc title="線・矢印 (L)"><i data-ic="arrow"></i><span class="lb">線・矢印</span></button>
@@ -82,18 +84,30 @@
       <button class="btn" id="btnStamp" data-needdoc title="スタンプを挿入"><i data-ic="stamp"></i><span class="lb">スタンプ</span></button>
     </div>
     <div class="grp opts">
-      <label class="opt" data-for="text highlight rect ellipse line pen strike replace insert">色<input type="color" id="optColor" value="#e11d48"></label>
+      <label class="opt" data-for="text highlight marker rect ellipse line pen strike replace insert">色<input type="color" id="optColor" value="#e11d48"></label>
       <label class="opt" data-for="rect ellipse"><input type="checkbox" id="optFillOn">塗り<input type="color" id="optFill" value="#ffffff"></label>
       <label class="opt" data-for="rect ellipse line pen">太さ
         <select id="optLw"><option>1</option><option>2</option><option>3</option><option>4</option><option>6</option><option>8</option><option>12</option></select>
       </label>
-      <label class="opt" data-for="text strike replace insert">サイズ<input type="number" id="optSize" min="6" max="200" step="1" value="14"></label>
+      <div class="opt" data-for="highlight marker">太さ
+        <span class="seg" id="optMwSeg"><button type="button" class="btn" data-mw="6">細</button><button type="button" class="btn" data-mw="12">中</button><button type="button" class="btn" data-mw="20">太</button></span>
+        <input type="number" id="optMw" min="1" max="80" step="1" value="12" title="太さを数値で指定(pt)">pt
+      </div>
+      <div class="opt" data-for="text strike replace insert">サイズ
+        <button type="button" class="btn sm sym" id="optSizeDown" title="文字を一段階小さく" aria-label="文字を小さく">▼</button><input type="number" id="optSize" min="6" max="200" step="1" value="14"><button type="button" class="btn sm sym" id="optSizeUp" title="文字を一段階大きく" aria-label="文字を大きく">▲</button>
+      </div>
+      <div class="opt" data-for="text">
+        <span class="seg fmt"><button type="button" class="btn" id="optBold" title="太字 (Ctrl+B)" aria-label="太字" aria-pressed="false"><span style="font-weight:800">A</span></button><button type="button" class="btn" id="optItalic" title="斜体 (Ctrl+I)" aria-label="斜体" aria-pressed="false"><span style="font-style:italic;font-family:Georgia,'Times New Roman',serif">A</span></button><button type="button" class="btn" id="optUnderline" title="下線 (Ctrl+U)" aria-label="下線" aria-pressed="false"><span style="text-decoration:underline;text-underline-offset:2px">A</span></button><button type="button" class="btn" id="optStrike" title="取り消し線" aria-label="取り消し線" aria-pressed="false"><span style="text-decoration:line-through">A</span></button></span>
+      </div>
       <label class="opt" data-for="line"><input type="checkbox" id="optArrow" checked>矢印</label>
       <label class="opt" data-for="insert"><input type="checkbox" id="optVert">縦組み</label>
+      <label class="opt" data-for="note"><input type="checkbox" id="optShowNotes">コメントを常に表示</label>
+      <button class="btn opt" data-for="lasso" id="btnPaste" title="コピーした注釈を表示中のページに貼り付け (Ctrl+V)"><i data-ic="copy"></i>貼り付け</button>
       <label class="opt" data-for="eraser">大きさ
         <select id="optEraser"><option value="6">小</option><option value="12" selected>中</option><option value="24">大</option><option value="48">特大</option></select>
       </label>
       <label class="opt" data-for="eraser"><input type="checkbox" id="optEraseWhole">線ごと</label>
+      <button class="btn opt" data-for="textsel" id="btnOcr" data-needdoc title="スキャンした画像のページから文字を読み取る（OCR）"><i data-ic="scan"></i>文字を読み取る</button>
       <span class="hint" id="optHint"></span>
     </div>
   </div>
@@ -185,19 +199,23 @@
 <script src="js/core/config.js"></script>
 <script src="js/core/dom.js"></script>
 <script src="js/core/icons.js"></script>
+<script src="js/ui/colorpicker.js"></script>
 <script src="js/core/state.js"></script>
 <script src="js/core/geometry.js"></script>
 <script src="js/annotations/render.js"></script>
 <script src="js/annotations/shape.js"></script>
 <script src="js/viewer/pages.js"></script>
+<script src="js/viewer/textlayer.js"></script>
 <script src="js/viewer/thumbnails.js"></script>
 <script src="js/viewer/navigation.js"></script>
 <script src="js/editor/history.js"></script>
 <script src="js/editor/tools.js"></script>
 <script src="js/editor/pointer.js"></script>
 <script src="js/editor/eraser.js"></script>
+<script src="js/editor/lasso.js"></script>
 <script src="js/proof/marks.js"></script>
 <script src="js/editor/insert.js"></script>
+<script src="js/editor/inline-text.js"></script>
 <script src="js/pages/operations.js"></script>
 <script src="js/io/open.js"></script>
 <script src="js/io/dragdrop.js"></script>
@@ -212,6 +230,7 @@
 <script src="js/document/folio.js"></script>
 <script src="js/document/split.js"></script>
 <script src="js/document/watermark.js"></script>
+<script src="js/document/ocr.js"></script>
 <script src="js/ui/menus.js"></script>
 <script src="js/proof/author.js"></script>
 <script src="js/ui/update.js"></script>

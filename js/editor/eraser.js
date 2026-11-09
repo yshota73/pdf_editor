@@ -7,7 +7,7 @@
 function eraseAlong(pg,x0,y0,x1,y1){
   const r=S.eraser.size/2; let changed=false; const out=[];
   for(const a of pg.annots){
-    if(a.type!=='pen'){out.push(a);continue;}
+    if(a.type!=='pen'&&a.type!=='marker'){out.push(a);continue;}
     const re=r+a.lw/2, b=bboxOf(a);
     if(Math.max(x0,x1)<b.x-re||Math.min(x0,x1)>b.x+b.w+re||Math.max(y0,y1)<b.y-re||Math.min(y0,y1)>b.y+b.h+re){out.push(a);continue;}
     const pieces=S.eraser.whole?eraseWhole(a,re,x0,y0,x1,y1):erasePart(a,re,x0,y0,x1,y1);
@@ -60,6 +60,6 @@ function setEraserPos(pid,x,y){
   if(prev&&prev.pid!==pid) redrawPage(prev.pid);
   if(pid!=null) redrawPage(pid);
 }
-function onLeave(){ if(S.eraserPos&&!drag) setEraserPos(null); }
+function onLeave(){ if(S.eraserPos&&!drag) setEraserPos(null); if(S.hoverNote) setHoverNote(null); }
 on('#optEraser','change',e=>{S.eraser.size=+e.target.value;});
 on('#optEraseWhole','change',e=>{S.eraser.whole=e.target.checked;});

@@ -30,3 +30,18 @@
 .mi .ck{width:14px;color:var(--accent);font-weight:700}
 .mi-sep{height:1px;background:var(--line);margin:4px 2px}
 .modal.wide{width:min(820px,100%)}
+/* 色の選択（Word のような 10色 × 5段階のパレット） */
+.cp-native{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0}
+.cbtn{display:inline-flex;align-items:center;gap:4px;height:28px;padding:0 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);cursor:pointer;color:var(--text)}
+.cbtn:hover:not(:disabled){border-color:var(--muted)}
+.cbtn .sw{width:18px;height:18px;border-radius:3px;border:1px solid rgba(0,0,0,.25);box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}
+.cpop{position:fixed;z-index:420;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:10px;width:max-content}
+.cph{font-size:11px;color:var(--muted);margin:2px 0 6px}
+.cph:not(:first-child){margin-top:10px}
+.cpg{display:grid;grid-template-columns:repeat(10,20px);gap:4px}
+.cps{width:20px;height:20px;padding:0;border:1px solid rgba(0,0,0,.2);border-radius:3px;cursor:pointer}
+.cps:hover,.cps:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.cps.on{outline:2px solid var(--accent);outline-offset:1px;box-shadow:inset 0 0 0 2px #fff}
+.cpmore{display:flex;align-items:center;gap:8px;width:100%;margin-top:10px;padding:6px 6px;border:0;border-top:1px solid var(--line);background:transparent;cursor:pointer;color:var(--text);text-align:left;border-radius:0 0 6px 6px}
+.cpmore:hover{background:var(--panel2)}
+.cpwheel{width:16px;height:16px;border-radius:50%;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red)}

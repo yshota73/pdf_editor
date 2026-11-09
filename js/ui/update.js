@@ -5,8 +5,9 @@
    ============================================================ */
 function updateUI(){
   const has=hasDoc();
-  $('#empty').style.display=has?'none':'flex'; pagesBox.style.display=has?'flex':'none';
+  $('#empty').style.display=has?'none':'flex'; pagesBox.style.display=has?'flex':'none'; viewBox.classList.toggle('hasdoc',has);
   $$('[data-needdoc]').forEach(b=>{b.disabled=!has;});
+  $('#btnPaste').disabled=!has||!S.clip;
   $('#btnUndo').disabled=S.hpos<=0; $('#btnRedo').disabled=S.hpos>=S.hist.length-1;
   $('#fname').textContent=has?(S.fileName+(S.dirty?'  ● 未保存':'')):'';
   document.title=has?`${S.dirty?'● ':''}${S.fileName} – PDFワークベンチ β`:'PDFワークベンチ β';
@@ -22,8 +23,8 @@ function updateUI(){
   refreshThumbMeta();
 }
 on('#btnUndo','click',undo); on('#btnRedo','click',redo);
-on('#btnZoomIn','click',()=>animateZoom(S.zoom*1.25)); on('#btnZoomOut','click',()=>animateZoom(S.zoom/1.25));
-on('#btnFit','click',()=>animateZoom(fitZoom()));
+on('#btnZoomIn','click',()=>animateZoom(S.zoom*ZSTEP)); on('#btnZoomOut','click',()=>animateZoom(S.zoom/ZSTEP));
+on('#btnFit','click',()=>animateZoom(fitZoom(),true));
 on('#zoomSel','change',e=>{const v=+e.target.value; if(v>0) animateZoom(v/100);});
 on('#btnPrev','click',()=>gotoPage(S.cur-1)); on('#btnNext','click',()=>gotoPage(S.cur+1));
 on('#pgIn','change',e=>gotoPage((+e.target.value||1)-1));

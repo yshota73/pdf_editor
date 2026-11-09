@@ -67,8 +67,8 @@ async function importOutline(doc,pages){
 function resetDoc(){
   S.sources.forEach(s=>{try{s.doc.destroy();}catch(e){}});
   S.sources=[]; S.pages=[]; S.imgs.clear(); S.checked=new Set(); S.sel=null; S.hist=[]; S.hpos=-1; S.cur=0; S.pending=null;
-  S.bm=[]; S.bmSel=null; S.watermark=null;
-  for(const d of pageEls.values()) killEl(d); pageEls=new Map();
+  S.bm=[]; S.bmSel=null; S.watermark=null; S.ocr=new Map();
+  for(const d of pageEls.values()) killEl(d); pageEls=new Map(); padX=null;
   for(const d of thumbEls.values()){tio.unobserve(d);d.remove();} thumbEls=new Map();
 }
 function afterLoad(){

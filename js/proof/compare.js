@@ -5,7 +5,7 @@
    ============================================================ */
 async function textOf(doc,idx){
   const p=await doc.getPage(idx+1); const tc=await p.getTextContent();
-  return tc.items.map(it=>(it.str||'')+(it.hasEOL?'\n':'')).join('');
+  return tc.items.map(it=>fixText(it.str||'')+(it.hasEOL?'\n':'')).join('');
 }
 function diffStr(a,b){
   const ops=[]; const push=(o,s)=>{if(!s) return; const l=ops[ops.length-1]; if(l&&l[0]===o) l[1]+=s; else ops.push([o,s]);};

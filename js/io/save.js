@@ -66,6 +66,12 @@ async function drawAnnotsPdf(out,page,pg,helv,cache,nat){
         if(a.arrow) for(const h of arrowPts(a)) seg([a.x2,a.y2],h);
         break;
       }
+      case 'marker': {
+        const p=a.points.length>1?a.points:[a.points[0],[a.points[0][0]+.01,a.points[0][1]]];
+        const path=p.map((q,i)=>{const [X,Y]=nat(q[0],q[1]); return `${i?'L':'M'}${X} ${-Y}`;}).join(' ');
+        page.drawSvgPath(path,{x:0,y:0,borderColor:hexRgb(a.color),borderWidth:a.lw,borderOpacity:.4,borderLineCap:LineCapStyle.Butt});
+        break;
+      }
       case 'pen': {
         const p=a.points;
         for(let i=0;i<p.length-1;i++){
@@ -75,7 +81,7 @@ async function drawAnnotsPdf(out,page,pg,helv,cache,nat){
         break;
       }
       case 'text': {
-        if(/^[\x20-\x7E\n]*$/.test(a.text)){
+        if(/^[\x20-\x7E\n]*$/.test(a.text)&&!a.bold&&!a.italic&&!a.underline&&!a.strikeout){
           getLines(a).forEach((ln,i)=>{
             if(!ln) return; const [x,y]=nat(a.x,a.y+a.size*ASC+i*a.size*LH);
             page.drawText(ln,{x,y,size:a.size,font:helv,color:hexRgb(a.color),rotate:rho});

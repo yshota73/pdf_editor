@@ -5,6 +5,7 @@ const MENUS={
   mProof:()=>[
     {label:'注釈一覧パネル',check:S.panel==='ann',run:()=>setPanel(S.panel==='ann'?null:'ann')},
     {label:'注釈一覧をCSVで書き出し',run:exportCsv},
+    {label:'付箋のコメントを常に表示',check:S.showNotes,run:()=>{S.showNotes=!S.showNotes; $('#optShowNotes').checked=S.showNotes; redrawAll();}},
     '-',
     {label:'注釈を書き出し（共有用 .json）',run:exportAnnots},
     {label:'注釈を読み込んで統合…',run:()=>$('#fileAnn').click()},
@@ -22,6 +23,8 @@ const MENUS={
     {label:'透かしを設定…',run:watermarkDialog},
     {label:'分割して保存（台割）…',run:splitDialog},
     '-',
+    {label:'文字を読み取る（OCR）…',run:ocrDialog},
+    '-',
     {label:'しおりパネル',check:S.panel==='bm',run:()=>setPanel(S.panel==='bm'?null:'bm')}
   ]
 };
@@ -36,6 +39,7 @@ function openMenu(btn,items){
   const r=btn.getBoundingClientRect();
   m.style.left=Math.max(4,Math.min(r.left,window.innerWidth-290))+'px'; m.style.top=(r.bottom+4)+'px'; m.classList.add('on');
 }
+on('#btnOcr','click',ocrDialog);
 $$('[data-menu]').forEach(b=>b.addEventListener('click',e=>{
   e.stopPropagation(); const m=$('#ddMenu');
   if(m.classList.contains('on')&&m._owner===b){m.classList.remove('on');return;}

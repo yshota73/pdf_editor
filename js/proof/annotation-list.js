@@ -4,7 +4,7 @@
    注釈一覧 (右パネル)
    ============================================================ */
 const annText=a=>a.type==='image'?'（画像・署名・スタンプ）':(a.text||'');
-function allAnnots(){const r=[]; S.pages.forEach((pg,i)=>pg.annots.forEach(a=>{if(!a.sys) r.push({pg,i,a});})); return r;}
+function allAnnots(){const r=[]; S.pages.forEach((pg,i)=>pg.annots.forEach(a=>{if(!a.sys&&!isEmptyText(a)) r.push({pg,i,a});})); return r;}
 function filteredAnnots(list){
   const fa=$('#annAuthor').value||'*', fk=$('#annKind').value||'*';
   return list.filter(x=>(fa==='*'||(x.a.author||'')===fa)&&(fk==='*'||x.a.type===fk));
