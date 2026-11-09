@@ -11,13 +11,13 @@ on('#btnHelp','click',()=>modal({title:'PDFワークベンチ β の使い方',b
   <ul><li>入稿メニュー: プリフライト（フォント埋め込み・画像解像度・RGB・特色・オーバープリント・仕上がり/塗り足し）、TrimBox/BleedBox の設定と表示</li>
   <li>文書メニュー: ノンブル・柱、透かし（見本・校正用など）、台割に沿った分割保存、しおり</li></ul>
   <h4>編集</h4>
-  <ul><li>注釈: テキスト・ハイライト・四角・楕円・線/矢印・手書き</li>
+  <ul><li>注釈: テキスト・ハイライト・四角・楕円・線/矢印・手書き（消しゴムでなぞった部分や線ごと消去）</li>
   <li>署名（手書き）・スタンプ（社外秘/承認/校了/責了/日付入りなど）・画像の挿入</li>
   <li>墨消し（保存時にそのページを画像化し、下の文字を完全に削除）</li>
   <li>ページの回転・削除・複製・並べ替え（ドラッグ可）・空白ページ挿入</li>
   <li>PDFの結合、選択ページの抽出、元に戻す/やり直し</li></ul>
   <h4>ショートカット</h4>
-  <ul><li><kbd>V</kbd> 選択　<kbd>T</kbd> テキスト　<kbd>H</kbd> ハイライト　<kbd>R</kbd> 四角　<kbd>O</kbd> 楕円　<kbd>L</kbd> 線　<kbd>P</kbd> 手書き　<kbd>X</kbd> 墨消し</li>
+  <ul><li><kbd>V</kbd> 選択　<kbd>T</kbd> テキスト　<kbd>H</kbd> ハイライト　<kbd>R</kbd> 四角　<kbd>O</kbd> 楕円　<kbd>L</kbd> 線　<kbd>P</kbd> 手書き　<kbd>E</kbd> 消しゴム　<kbd>X</kbd> 墨消し</li>
   <li><kbd>D</kbd> トル　<kbd>C</kbd> 置換　<kbd>I</kbd> 挿入　<kbd>N</kbd> 付箋</li>
   <li><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Y</kbd> 元に戻す/やり直し　<kbd>Ctrl</kbd>+<kbd>S</kbd> 保存　<kbd>Ctrl</kbd>+<kbd>O</kbd> 開く</li>
   <li><kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>V</kbd> 注釈のコピー/貼り付け　<kbd>Delete</kbd> 削除　矢印キーで微調整　<kbd>Ctrl</kbd>+ホイールで拡大縮小</li></ul>

@@ -21,7 +21,7 @@ document.addEventListener('keydown',e=>{
     } return;
   }
   if(mod||e.altKey||!hasDoc()) return;
-  const map={v:'select',t:'text',h:'highlight',r:'rect',o:'ellipse',l:'line',p:'pen',x:'redact',d:'strike',c:'replace',i:'insert',n:'note'};
+  const map={v:'select',t:'text',h:'highlight',r:'rect',o:'ellipse',l:'line',p:'pen',e:'eraser',x:'redact',d:'strike',c:'replace',i:'insert',n:'note'};
   if(map[k]){setTool(map[k]);return;}
   if(e.key==='Escape'){S.pending=null;setTool('select');select(null,null);return;}
   const a=getSel();

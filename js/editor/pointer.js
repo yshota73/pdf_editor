@@ -49,6 +49,10 @@ function onDown(ev,d){
     ev.preventDefault(); placePending(pg,x,y);
   } else if(t==='insert'||t==='note'){
     ev.preventDefault(); addProofPoint(pg.id,x,y,t);
+  } else if(t==='eraser'){
+    ev.preventDefault(); d._ov.setPointerCapture(ev.pointerId);
+    drag={mode:'erase',pid:pg.id,lx:x,ly:y,changed:eraseAlong(pg,x,y,x,y)};
+    setEraserPos(pg.id,x,y);
   } else {
     ev.preventDefault(); d._ov.setPointerCapture(ev.pointerId);
     const id=uid(); let a;
@@ -71,11 +75,16 @@ function onMove(ev,d){
       if(hh>=0) cur=handleCursor(pg,sa,hh);
       else {const [x,y]=ptrBase(ev,d,pg); if(hitAnnot(pg,x,y,6/PXPT())) cur='move';}
       d._ov.style.cursor=cur;
-    }
+    } else if(S.tool==='eraser'){const [x,y]=ptrBase(ev,d,pg); setEraserPos(pg.id,x,y);}
     return;
   }
   if(drag.pid!==pg.id) return;
   if(drag.mode==='textbox'){const [tx,ty]=ptrBase(ev,d,pg); drag.x=tx; drag.y=ty; drawOverlay(d,pg); return;}
+  if(drag.mode==='erase'){
+    const [x,y]=ptrBase(ev,d,pg);
+    if(eraseAlong(pg,drag.lx,drag.ly,x,y)) drag.changed=true;
+    drag.lx=x; drag.ly=y; setEraserPos(pg.id,x,y); return;
+  }
   const a=pg.annots.find(q=>q.id===drag.aid); if(!a) return;
   const [x,y]=ptrBase(ev,d,pg);
   if(drag.mode==='create'){
@@ -111,6 +120,7 @@ function onUp(ev,d){
     else editText(pg.id,0,0,null,{x:Math.min(dr.ax,dr.x),y:Math.min(dr.ay,dr.y),w,h:hh});
     return;
   }
+  if(dr.mode==='erase'){ if(dr.changed){syncOptions(); commit();} return; }
   const a=pg.annots.find(q=>q.id===dr.aid); if(!a) return;
   if(dr.mode==='create'){
     let ok=true;

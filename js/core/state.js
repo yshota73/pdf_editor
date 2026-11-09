@@ -13,6 +13,7 @@ const S={
   colors:{text:'#111111',highlight:'#ffe600',shape:'#e11d48',proof:'#e60012'},
   lw:2, sizes:{text:14,proof:10}, fillOn:false, fillColor:'#ffffff', arrow:true, vert:false,
   pending:null, clip:null,
+  eraser:{size:12,whole:false}, eraserPos:null,   // 消しゴムの直径(pt)・線ごと消すか / 表示中の位置
   author:'',             // 注釈に記録する作成者名
   bm:[], bmSel:null,     // しおり {id, title, pid, level}
   watermark:null,        // {text, color, opacity, size, angle}

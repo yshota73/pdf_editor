@@ -109,6 +109,7 @@ js/
     history.js            元に戻す・やり直し
     tools.js              ツール選択・オプション
     pointer.js            マウス・ペン操作
+    eraser.js             消しゴム（手書きの線をなぞって消す・線ごと消す）
     insert.js             テキスト・署名・スタンプ・画像の挿入
   pages/operations.js     ページの回転・削除・並べ替え・複製・空白ページ
   io/                     ファイル入出力

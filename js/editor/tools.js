@@ -23,7 +23,8 @@ const HINTS={
   strike:'削除する文字の上をドラッグ（縦組みは縦にドラッグ）。ダブルクリックで指示文を変更',
   replace:'直したい文字の上をドラッグし、正しい文字を入力',
   insert:'挿入位置をクリックし、入れる文字を入力（縦組みは「縦組み」をオン）',
-  note:'クリックした位置に付箋コメントを貼ります。選択すると内容が表示されます'
+  note:'クリックした位置に付箋コメントを貼ります。選択すると内容が表示されます',
+  eraser:'手書きの線をなぞった部分を消します（「線ごと」をオンにすると触れた線をまとめて消去）'
 };
 function syncOptions(){
   const t=activeType(), a=getSel();
@@ -40,6 +41,7 @@ function syncOptions(){
 }
 function setTool(t){
   S.tool=t; pagesBox.dataset.tool=t;
+  if(t!=='eraser'&&S.eraserPos) setEraserPos(null);
   for(const d of pageEls.values()) d._ov.style.cursor='';
   $$('[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===t));
   if(t!=='select'&&S.sel) select(null,null); else syncOptions();

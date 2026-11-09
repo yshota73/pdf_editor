@@ -56,6 +56,7 @@
   <button class="btn" data-tool="ellipse" data-needdoc title="楕円 (O)"><i data-ic="circle"></i><span class="lb">楕円</span></button>
   <button class="btn" data-tool="line" data-needdoc title="線・矢印 (L)"><i data-ic="arrow"></i><span class="lb">線・矢印</span></button>
   <button class="btn" data-tool="pen" data-needdoc title="フリーハンド (P)"><i data-ic="pencil"></i><span class="lb">手書き</span></button>
+  <button class="btn" data-tool="eraser" data-needdoc title="消しゴム (E) — 手書きの線を消す"><i data-ic="eraser"></i><span class="lb">消しゴム</span></button>
   <button class="btn" data-tool="redact" data-needdoc title="墨消し (X) — 保存時に下の文字を完全に削除"><i data-ic="redact"></i><span class="lb">墨消し</span></button>
   <div class="sep"></div>
   <button class="btn" data-tool="strike" data-needdoc title="トル・削除指示 (D) — 文字の上をドラッグ"><i data-ic="strike"></i><span class="lb">トル</span></button>
@@ -75,6 +76,10 @@
   <label class="opt" data-for="text strike replace insert">サイズ<input type="number" id="optSize" min="6" max="200" step="1" value="14"></label>
   <label class="opt" data-for="line"><input type="checkbox" id="optArrow" checked>矢印</label>
   <label class="opt" data-for="insert"><input type="checkbox" id="optVert">縦組み</label>
+  <label class="opt" data-for="eraser">大きさ
+    <select id="optEraser"><option value="6">小</option><option value="12" selected>中</option><option value="24">大</option><option value="48">特大</option></select>
+  </label>
+  <label class="opt" data-for="eraser"><input type="checkbox" id="optEraseWhole">線ごと</label>
   <span class="hint" id="optHint"></span>
 </div>
 
@@ -174,6 +179,7 @@
 <script src="js/editor/history.js"></script>
 <script src="js/editor/tools.js"></script>
 <script src="js/editor/pointer.js"></script>
+<script src="js/editor/eraser.js"></script>
 <script src="js/proof/marks.js"></script>
 <script src="js/editor/insert.js"></script>
 <script src="js/pages/operations.js"></script>

@@ -23,6 +23,7 @@ function makePageEl(pg){
   ov.addEventListener('pointerup',ev=>onUp(ev,d));
   ov.addEventListener('pointercancel',ev=>onUp(ev,d));
   ov.addEventListener('dblclick',ev=>onDbl(ev,d));
+  ov.addEventListener('pointerleave',onLeave);
   io.observe(d);
   return d;
 }
@@ -72,6 +73,7 @@ function drawOverlay(d,pg){
   for(const an of pg.annots) drawAnnot(ctx,an);
   const wm=wmFor(pg); if(wm) drawAnnot(ctx,wm);
   if(S.showBoxes) drawBoxes(ctx,pg);
+  drawEraserCursor(ctx,pg);
   if(S.sel&&S.sel.pid===pg.id){const an=pg.annots.find(x=>x.id===S.sel.aid); if(an&&an.type==='note') drawNotePop(ctx,an);}
   if(drag&&drag.mode==='textbox'&&drag.pid===pg.id){
     const u=1/PXPT(); ctx.save(); ctx.strokeStyle='#2350d8'; ctx.lineWidth=1.5*u; ctx.setLineDash([5*u,4*u]);
