@@ -18,7 +18,7 @@
 .th .thn{margin-top:4px;font-size:12px;color:var(--muted)}
 .th.cur .thn{color:var(--accent);font-weight:700}
 .th .tb{font-size:10px;min-height:14px;color:var(--danger)}
-.view{flex:1;overflow:auto;background:var(--view);position:relative}
+.view{flex:1;overflow:auto;background:var(--view);position:relative;touch-action:pan-x pan-y}
 #pages{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px;padding:18px;min-width:max-content}
 .pg{position:relative;background:#fff;box-shadow:var(--shadow);flex:none}
 .pg canvas{position:absolute;left:0;top:0;display:block}

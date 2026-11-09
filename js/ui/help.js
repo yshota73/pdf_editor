@@ -20,7 +20,7 @@ on('#btnHelp','click',()=>modal({title:'PDFワークベンチ β の使い方',b
   <ul><li><kbd>V</kbd> 選択　<kbd>T</kbd> テキスト　<kbd>H</kbd> ハイライト　<kbd>R</kbd> 四角　<kbd>O</kbd> 楕円　<kbd>L</kbd> 線　<kbd>P</kbd> 手書き　<kbd>E</kbd> 消しゴム　<kbd>X</kbd> 墨消し</li>
   <li><kbd>D</kbd> トル　<kbd>C</kbd> 置換　<kbd>I</kbd> 挿入　<kbd>N</kbd> 付箋</li>
   <li><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Y</kbd> 元に戻す/やり直し　<kbd>Ctrl</kbd>+<kbd>S</kbd> 保存　<kbd>Ctrl</kbd>+<kbd>O</kbd> 開く</li>
-  <li><kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>V</kbd> 注釈のコピー/貼り付け　<kbd>Delete</kbd> 削除　矢印キーで微調整　<kbd>Ctrl</kbd>+ホイールで拡大縮小</li></ul>
+  <li><kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>V</kbd> 注釈のコピー/貼り付け　<kbd>Delete</kbd> 削除　矢印キーで微調整　<kbd>Ctrl</kbd>+ホイール・ピンチ操作でなめらかに拡大縮小</li></ul>
   <h4>β版の制限</h4>
   <ul><li>既存テキストの書き換え、OCR、テキスト検索/選択、フォーム入力、電子署名（証明書）、パスワード設定、PDF/X書き出し、分版プレビューは未対応です。</li>
   <li>校正記号の指示文・透かしは保存時に画像として埋め込まれます。</li>

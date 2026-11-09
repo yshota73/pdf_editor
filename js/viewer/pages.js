@@ -46,7 +46,8 @@ function activate(d){
 }
 function deactivate(d){
   if(!d._active) return;
-  d._active=false; d._tok++;
+  d._active=false; d._tok++; d._done=false;
+  dropPlaceholder(d);
   try{d._task&&d._task.cancel();}catch(e){}
   d._task=null;
   d._base.width=d._base.height=0; d._ov.width=d._ov.height=0;
@@ -62,6 +63,7 @@ async function renderBase(d,pid,tok){
     const task=page.render({canvasContext:ctx,viewport:vp});
     d._task=task;
     await task.promise;
+    if(d._tok===tok){d._done=true; dropPlaceholder(d);}
   }catch(e){ if(e&&e.name!=='RenderingCancelledException') console.warn('render',e); }
 }
 function drawOverlay(d,pg){
@@ -101,6 +103,15 @@ function drawSel(ctx,d,pg,a){
   }
   ctx.restore();
 }
+/* 倍率変更直後、新しい描画が終わるまで旧倍率の画像を引き伸ばして表示しておく */
+function dropPlaceholder(d){ if(d._ph){d._ph.remove(); d._ph=null;} }
+function takePlaceholder(old,pg){
+  if(!old||!old._active||!(old._done||old._ph)||pg.src==null) return null;
+  if(old._key.split('|')[0]!==String(pg.rot)) return null;
+  const ph=old._done?old._base:old._ph;
+  if(old._done){old._base=document.createElement('canvas'); old._done=false;} else old._ph=null;
+  return ph;
+}
 function redrawPage(pid){const d=pageEls.get(pid),pg=pageById(pid); if(d&&pg) drawOverlay(d,pg);}
 function redrawAll(){for(const [id] of pageEls) redrawPage(id);}
 
@@ -108,7 +119,11 @@ function buildPages(){
   const next=new Map(); const frag=document.createDocumentFragment();
   S.pages.forEach(pg=>{
     let d=pageEls.get(pg.id); const key=`${pg.rot}|${S.zoom}`;
-    if(!d||d._key!==key){ if(d) killEl(d); d=makePageEl(pg); }
+    if(!d||d._key!==key){
+      const ph=takePlaceholder(d,pg);
+      if(d) killEl(d); d=makePageEl(pg);
+      if(ph){ph.className='ph'; ph.style.width=ph.style.height='100%'; d.insertBefore(ph,d._ov); d._ph=ph;}
+    }
     next.set(pg.id,d); frag.append(d);
   });
   for(const [id,d] of pageEls) if(!next.has(id)) killEl(d);

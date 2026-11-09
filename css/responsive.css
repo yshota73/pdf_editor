@@ -2,6 +2,8 @@
 @media (max-width:820px){
   .lb{display:none}
   .fname{display:none}
+  .brand b,.beta{display:none}
+  .author{width:84px}
   .side{position:absolute;z-index:20;left:0;top:0;bottom:0;box-shadow:var(--shadow)}
   .rpanel{position:absolute;z-index:20;right:0;top:0;bottom:0;box-shadow:var(--shadow);width:min(290px,90vw)}
   .work{position:relative}

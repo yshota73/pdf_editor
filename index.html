@@ -14,73 +14,89 @@
 <body>
 
 <div class="bar" id="bar1">
-  <div class="brand"><span class="logo">PDF</span><b>ワークベンチ</b><span class="beta">β</span></div>
-  <button class="btn ic" id="btnSide" title="ページ一覧の表示切替"><i data-ic="panel"></i></button>
-  <button class="btn" id="btnOpen" title="PDFを開く (Ctrl+O)"><i data-ic="folder"></i><span class="lb">開く</span></button>
-  <button class="btn" id="btnMerge" data-needdoc title="別のPDFを末尾に結合"><i data-ic="layers"></i><span class="lb">結合</span></button>
-  <div class="sep"></div>
-  <button class="btn" id="mProof" data-needdoc data-menu title="校正（注釈一覧・CSV・注釈の統合・版比較）"><i data-ic="list"></i><span class="lb">校正</span><i data-ic="chev"></i></button>
-  <button class="btn" id="mPress" data-needdoc data-menu title="入稿チェック（プリフライト・仕上がり/塗り足し）"><i data-ic="check"></i><span class="lb">入稿</span><i data-ic="chev"></i></button>
-  <button class="btn" id="mDoc" data-needdoc data-menu title="文書（ノンブル・柱・分割・透かし・しおり）"><i data-ic="book"></i><span class="lb">文書</span><i data-ic="chev"></i></button>
-  <div class="sep"></div>
-  <button class="btn ic" id="btnUndo" title="元に戻す (Ctrl+Z)"><i data-ic="undo"></i></button>
-  <button class="btn ic" id="btnRedo" title="やり直し (Ctrl+Y)"><i data-ic="redo"></i></button>
-  <div class="sep"></div>
-  <button class="btn ic" id="btnZoomOut" data-needdoc title="縮小"><i data-ic="zoomout"></i></button>
-  <select id="zoomSel" data-needdoc title="表示倍率">
-    <option value="50">50%</option><option value="75">75%</option><option value="100">100%</option>
-    <option value="125">125%</option><option value="150">150%</option><option value="200">200%</option>
-    <option value="300">300%</option><option data-custom hidden value="0"></option>
-  </select>
-  <button class="btn ic" id="btnZoomIn" data-needdoc title="拡大"><i data-ic="zoomin"></i></button>
-  <button class="btn ic" id="btnFit" data-needdoc title="幅に合わせる"><i data-ic="fit"></i></button>
-  <div class="sep"></div>
-  <button class="btn ic" id="btnPrev" data-needdoc title="前のページ"><i data-ic="up"></i></button>
-  <input type="number" id="pgIn" min="1" data-needdoc title="ページ番号">
-  <span id="pgTotal" class="hint">/ 0</span>
-  <button class="btn ic" id="btnNext" data-needdoc title="次のページ"><i data-ic="down"></i></button>
-  <div class="spacer"></div>
-  <span class="fname" id="fname"></span>
-  <input class="author" id="author" placeholder="作成者名" title="注釈に記録する作成者名（著者・編集者・校正者など）">
-  <button class="btn" id="btnExtract" data-needdoc title="選択ページ(未選択なら表示中のページ)だけを別PDFとして保存"><i data-ic="scissors"></i><span class="lb">抽出</span></button>
-  <button class="btn primary" id="btnSave" data-needdoc title="編集済みPDFを保存 (Ctrl+S)"><i data-ic="download"></i><span class="lb">保存</span></button>
-  <button class="btn ic" id="btnHelp" title="使い方・β版の制限"><i data-ic="help"></i></button>
-  <button class="btn ic" id="btnTheme" title="ライト/ダーク切替"><i data-ic="moon"></i></button>
+  <div class="bar-row">
+    <div class="grp">
+      <div class="brand"><span class="logo">PDF</span><b>ワークベンチ</b><span class="beta">β</span></div>
+      <button class="btn ic" id="btnSide" title="ページ一覧の表示切替"><i data-ic="panel"></i></button>
+      <button class="btn" id="btnOpen" title="PDFを開く (Ctrl+O)"><i data-ic="folder"></i><span class="lb">開く</span></button>
+      <button class="btn" id="btnMerge" data-needdoc title="別のPDFを末尾に結合"><i data-ic="layers"></i><span class="lb">結合</span></button>
+    </div>
+    <div class="grp">
+      <button class="btn" id="mProof" data-needdoc data-menu title="校正（注釈一覧・CSV・注釈の統合・版比較）"><i data-ic="list"></i><span class="lb">校正</span><i data-ic="chev"></i></button>
+      <button class="btn" id="mPress" data-needdoc data-menu title="入稿チェック（プリフライト・仕上がり/塗り足し）"><i data-ic="check"></i><span class="lb">入稿</span><i data-ic="chev"></i></button>
+      <button class="btn" id="mDoc" data-needdoc data-menu title="文書（ノンブル・柱・分割・透かし・しおり）"><i data-ic="book"></i><span class="lb">文書</span><i data-ic="chev"></i></button>
+    </div>
+    <div class="grp">
+      <button class="btn ic" id="btnUndo" title="元に戻す (Ctrl+Z)"><i data-ic="undo"></i></button>
+      <button class="btn ic" id="btnRedo" title="やり直し (Ctrl+Y)"><i data-ic="redo"></i></button>
+    </div>
+    <div class="grp">
+      <button class="btn ic" id="btnZoomOut" data-needdoc title="縮小"><i data-ic="zoomout"></i></button>
+      <select id="zoomSel" data-needdoc title="表示倍率">
+        <option value="50">50%</option><option value="75">75%</option><option value="100">100%</option>
+        <option value="125">125%</option><option value="150">150%</option><option value="200">200%</option>
+        <option value="300">300%</option><option data-custom hidden value="0"></option>
+      </select>
+      <button class="btn ic" id="btnZoomIn" data-needdoc title="拡大"><i data-ic="zoomin"></i></button>
+      <button class="btn ic" id="btnFit" data-needdoc title="幅に合わせる"><i data-ic="fit"></i></button>
+    </div>
+    <div class="grp">
+      <button class="btn ic" id="btnPrev" data-needdoc title="前のページ"><i data-ic="up"></i></button>
+      <input type="number" id="pgIn" min="1" data-needdoc title="ページ番号">
+      <span id="pgTotal" class="hint">/ 0</span>
+      <button class="btn ic" id="btnNext" data-needdoc title="次のページ"><i data-ic="down"></i></button>
+    </div>
+    <div class="grp end">
+      <span class="fname" id="fname"></span>
+      <input class="author" id="author" placeholder="作成者名" title="注釈に記録する作成者名（著者・編集者・校正者など）">
+      <button class="btn" id="btnExtract" data-needdoc title="選択ページ(未選択なら表示中のページ)だけを別PDFとして保存"><i data-ic="scissors"></i><span class="lb">抽出</span></button>
+      <button class="btn primary" id="btnSave" data-needdoc title="編集済みPDFを保存 (Ctrl+S)"><i data-ic="download"></i><span class="lb">保存</span></button>
+      <button class="btn ic" id="btnHelp" title="使い方・β版の制限"><i data-ic="help"></i></button>
+      <button class="btn ic" id="btnTheme" title="ライト/ダーク切替"><i data-ic="moon"></i></button>
+    </div>
+  </div>
 </div>
 
 <div class="bar" id="bar2">
-  <button class="btn active" data-tool="select" data-needdoc title="選択・移動 (V)"><i data-ic="pointer"></i><span class="lb">選択</span></button>
-  <button class="btn" data-tool="text" data-needdoc title="テキスト (T)"><i data-ic="type"></i><span class="lb">テキスト</span></button>
-  <button class="btn" data-tool="highlight" data-needdoc title="ハイライト (H)"><i data-ic="highlighter"></i><span class="lb">ハイライト</span></button>
-  <button class="btn" data-tool="rect" data-needdoc title="四角形 (R)"><i data-ic="square"></i><span class="lb">四角</span></button>
-  <button class="btn" data-tool="ellipse" data-needdoc title="楕円 (O)"><i data-ic="circle"></i><span class="lb">楕円</span></button>
-  <button class="btn" data-tool="line" data-needdoc title="線・矢印 (L)"><i data-ic="arrow"></i><span class="lb">線・矢印</span></button>
-  <button class="btn" data-tool="pen" data-needdoc title="フリーハンド (P)"><i data-ic="pencil"></i><span class="lb">手書き</span></button>
-  <button class="btn" data-tool="eraser" data-needdoc title="消しゴム (E) — 手書きの線を消す"><i data-ic="eraser"></i><span class="lb">消しゴム</span></button>
-  <button class="btn" data-tool="redact" data-needdoc title="墨消し (X) — 保存時に下の文字を完全に削除"><i data-ic="redact"></i><span class="lb">墨消し</span></button>
-  <div class="sep"></div>
-  <button class="btn" data-tool="strike" data-needdoc title="トル・削除指示 (D) — 文字の上をドラッグ"><i data-ic="strike"></i><span class="lb">トル</span></button>
-  <button class="btn" data-tool="replace" data-needdoc title="置換指示 (C) — 文字の上をドラッグして正しい文字を入力"><i data-ic="replace"></i><span class="lb">置換</span></button>
-  <button class="btn" data-tool="insert" data-needdoc title="挿入指示 (I) — 挿入位置をクリック"><i data-ic="caret"></i><span class="lb">挿入</span></button>
-  <button class="btn" data-tool="note" data-needdoc title="付箋コメント (N)"><i data-ic="note"></i><span class="lb">付箋</span></button>
-  <div class="sep"></div>
-  <button class="btn" id="btnImage" data-needdoc title="画像を挿入"><i data-ic="image"></i><span class="lb">画像</span></button>
-  <button class="btn" id="btnSign" data-needdoc title="手書き署名を作成して挿入"><i data-ic="sign"></i><span class="lb">署名</span></button>
-  <button class="btn" id="btnStamp" data-needdoc title="スタンプを挿入"><i data-ic="stamp"></i><span class="lb">スタンプ</span></button>
-  <div class="sep"></div>
-  <label class="opt" data-for="text highlight rect ellipse line pen strike replace insert">色<input type="color" id="optColor" value="#e11d48"></label>
-  <label class="opt" data-for="rect ellipse"><input type="checkbox" id="optFillOn">塗り<input type="color" id="optFill" value="#ffffff"></label>
-  <label class="opt" data-for="rect ellipse line pen">太さ
-    <select id="optLw"><option>1</option><option>2</option><option>3</option><option>4</option><option>6</option><option>8</option><option>12</option></select>
-  </label>
-  <label class="opt" data-for="text strike replace insert">サイズ<input type="number" id="optSize" min="6" max="200" step="1" value="14"></label>
-  <label class="opt" data-for="line"><input type="checkbox" id="optArrow" checked>矢印</label>
-  <label class="opt" data-for="insert"><input type="checkbox" id="optVert">縦組み</label>
-  <label class="opt" data-for="eraser">大きさ
-    <select id="optEraser"><option value="6">小</option><option value="12" selected>中</option><option value="24">大</option><option value="48">特大</option></select>
-  </label>
-  <label class="opt" data-for="eraser"><input type="checkbox" id="optEraseWhole">線ごと</label>
-  <span class="hint" id="optHint"></span>
+  <div class="bar-row">
+    <div class="grp">
+      <button class="btn active" data-tool="select" data-needdoc title="選択・移動 (V)"><i data-ic="pointer"></i><span class="lb">選択</span></button>
+      <button class="btn" data-tool="text" data-needdoc title="テキスト (T)"><i data-ic="type"></i><span class="lb">テキスト</span></button>
+      <button class="btn" data-tool="highlight" data-needdoc title="ハイライト (H)"><i data-ic="highlighter"></i><span class="lb">ハイライト</span></button>
+      <button class="btn" data-tool="rect" data-needdoc title="四角形 (R)"><i data-ic="square"></i><span class="lb">四角</span></button>
+      <button class="btn" data-tool="ellipse" data-needdoc title="楕円 (O)"><i data-ic="circle"></i><span class="lb">楕円</span></button>
+      <button class="btn" data-tool="line" data-needdoc title="線・矢印 (L)"><i data-ic="arrow"></i><span class="lb">線・矢印</span></button>
+      <button class="btn" data-tool="pen" data-needdoc title="フリーハンド (P)"><i data-ic="pencil"></i><span class="lb">手書き</span></button>
+      <button class="btn" data-tool="eraser" data-needdoc title="消しゴム (E) — 手書きの線を消す"><i data-ic="eraser"></i><span class="lb">消しゴム</span></button>
+      <button class="btn" data-tool="redact" data-needdoc title="墨消し (X) — 保存時に下の文字を完全に削除"><i data-ic="redact"></i><span class="lb">墨消し</span></button>
+    </div>
+    <div class="grp">
+      <button class="btn" data-tool="strike" data-needdoc title="トル・削除指示 (D) — 文字の上をドラッグ"><i data-ic="strike"></i><span class="lb">トル</span></button>
+      <button class="btn" data-tool="replace" data-needdoc title="置換指示 (C) — 文字の上をドラッグして正しい文字を入力"><i data-ic="replace"></i><span class="lb">置換</span></button>
+      <button class="btn" data-tool="insert" data-needdoc title="挿入指示 (I) — 挿入位置をクリック"><i data-ic="caret"></i><span class="lb">挿入</span></button>
+      <button class="btn" data-tool="note" data-needdoc title="付箋コメント (N)"><i data-ic="note"></i><span class="lb">付箋</span></button>
+    </div>
+    <div class="grp">
+      <button class="btn" id="btnImage" data-needdoc title="画像を挿入"><i data-ic="image"></i><span class="lb">画像</span></button>
+      <button class="btn" id="btnSign" data-needdoc title="手書き署名を作成して挿入"><i data-ic="sign"></i><span class="lb">署名</span></button>
+      <button class="btn" id="btnStamp" data-needdoc title="スタンプを挿入"><i data-ic="stamp"></i><span class="lb">スタンプ</span></button>
+    </div>
+    <div class="grp opts">
+      <label class="opt" data-for="text highlight rect ellipse line pen strike replace insert">色<input type="color" id="optColor" value="#e11d48"></label>
+      <label class="opt" data-for="rect ellipse"><input type="checkbox" id="optFillOn">塗り<input type="color" id="optFill" value="#ffffff"></label>
+      <label class="opt" data-for="rect ellipse line pen">太さ
+        <select id="optLw"><option>1</option><option>2</option><option>3</option><option>4</option><option>6</option><option>8</option><option>12</option></select>
+      </label>
+      <label class="opt" data-for="text strike replace insert">サイズ<input type="number" id="optSize" min="6" max="200" step="1" value="14"></label>
+      <label class="opt" data-for="line"><input type="checkbox" id="optArrow" checked>矢印</label>
+      <label class="opt" data-for="insert"><input type="checkbox" id="optVert">縦組み</label>
+      <label class="opt" data-for="eraser">大きさ
+        <select id="optEraser"><option value="6">小</option><option value="12" selected>中</option><option value="24">大</option><option value="48">特大</option></select>
+      </label>
+      <label class="opt" data-for="eraser"><input type="checkbox" id="optEraseWhole">線ごと</label>
+      <span class="hint" id="optHint"></span>
+    </div>
+  </div>
 </div>
 
 <div class="work">

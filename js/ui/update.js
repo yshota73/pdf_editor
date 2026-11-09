@@ -22,9 +22,9 @@ function updateUI(){
   refreshThumbMeta();
 }
 on('#btnUndo','click',undo); on('#btnRedo','click',redo);
-on('#btnZoomIn','click',()=>applyZoom(S.zoom*1.2)); on('#btnZoomOut','click',()=>applyZoom(S.zoom/1.2));
-on('#btnFit','click',()=>applyZoom(fitZoom()));
-on('#zoomSel','change',e=>{const v=+e.target.value; if(v>0) applyZoom(v/100);});
+on('#btnZoomIn','click',()=>animateZoom(S.zoom*1.25)); on('#btnZoomOut','click',()=>animateZoom(S.zoom/1.25));
+on('#btnFit','click',()=>animateZoom(fitZoom()));
+on('#zoomSel','change',e=>{const v=+e.target.value; if(v>0) animateZoom(v/100);});
 on('#btnPrev','click',()=>gotoPage(S.cur-1)); on('#btnNext','click',()=>gotoPage(S.cur+1));
 on('#pgIn','change',e=>gotoPage((+e.target.value||1)-1));
 on('#pgIn','keydown',e=>{if(e.key==='Enter'){e.target.blur();}});

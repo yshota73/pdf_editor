@@ -27,12 +27,18 @@ body{
   font:13px/1.45 "Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;
 }
 button,input,select,textarea{font:inherit;color:inherit}
-.bar{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--panel);border-bottom:1px solid var(--line);overflow-x:auto;flex:none;scrollbar-width:thin}
-.bar>*{flex:none}
+/* ツールバー: 機能ごとのグループ単位で折り返す（横スクロールしない） */
+.bar{padding:6px 10px;background:var(--panel);border-bottom:1px solid var(--line);flex:none}
+.bar-row{display:flex;flex-wrap:wrap;align-items:center;row-gap:6px;margin-left:-13px;clip-path:inset(-8px -8px -8px 8px)}
+.grp{display:flex;flex-wrap:wrap;align-items:center;gap:6px;position:relative;padding-left:13px;min-height:30px}
+.grp>*{flex:none}
+.grp::before{content:"";position:absolute;left:6px;top:4px;bottom:4px;width:1px;background:var(--line)}
+.grp.end{margin-left:auto}
+.grp.end::before{display:none}
+.grp.opts:not(:has(.opt.on)):has(#optHint:empty){display:none}
 .brand{display:flex;align-items:center;gap:8px;margin-right:6px;font-size:14px}
 .logo{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:5px;background:var(--accent);color:var(--accent-fg);font-weight:800;font-size:11px;letter-spacing:.02em}
 .beta{font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;border:1px solid var(--accent);color:var(--accent)}
-.sep{width:1px;height:22px;background:var(--line);margin:0 4px}
 .spacer{flex:1 1 auto}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:30px;padding:0 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);cursor:pointer;white-space:nowrap}
 .btn:hover:not(:disabled){background:var(--panel2);border-color:var(--muted)}
