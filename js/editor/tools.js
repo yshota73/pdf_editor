@@ -112,4 +112,8 @@ function toggleTextStyle(k){
 for(const [id,k] of TEXT_STYLES) on(id,'click',()=>toggleTextStyle(k));
 on('#optShowNotes','change',e=>{S.showNotes=e.target.checked; redrawAll();});
 // ツールバーのボタンだけ（ページの入れ物 #pages も data-tool を持つので、それには付けない）
-$$('.bar [data-tool]').forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool)));
+// 選んでいるツールのボタンをもう一度押すと、そのツールを外して「選択」に戻す
+$$('.bar [data-tool]').forEach(b=>b.addEventListener('click',()=>{
+  const t=b.dataset.tool;
+  setTool(t===S.tool&&t!=='select'?'select':t);
+}));
