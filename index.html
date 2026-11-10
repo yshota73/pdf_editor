@@ -103,9 +103,10 @@
       <label class="opt" data-for="insert"><input type="checkbox" id="optVert">縦組み</label>
       <label class="opt" data-for="note"><input type="checkbox" id="optShowNotes">コメントを常に表示</label>
       <button class="btn opt" data-for="lasso" id="btnPaste" title="コピーした注釈を表示中のページに貼り付け (Ctrl+V)"><i data-ic="copy"></i>貼り付け</button>
-      <label class="opt" data-for="eraser">大きさ
-        <select id="optEraser"><option value="6">小</option><option value="12" selected>中</option><option value="24">大</option><option value="48">特大</option></select>
-      </label>
+      <div class="opt" data-for="eraser">太さ
+        <span class="seg" id="optEraserSeg"><button type="button" class="btn" data-ew="6">細</button><button type="button" class="btn" data-ew="12">中</button><button type="button" class="btn" data-ew="24">太</button></span>
+        <input type="number" id="optEraser" min="1" max="200" step="1" value="12" title="消しゴムの太さを数値で指定(pt)">pt
+      </div>
       <label class="opt" data-for="eraser"><input type="checkbox" id="optEraseWhole">線ごと</label>
       <button class="btn opt" data-for="textsel" id="btnOcr" data-needdoc title="スキャンした画像のページから文字を読み取る（OCR）"><i data-ic="scan"></i>文字を読み取る</button>
       <span class="hint" id="optHint"></span>

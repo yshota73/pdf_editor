@@ -61,5 +61,15 @@ function setEraserPos(pid,x,y){
   if(pid!=null) redrawPage(pid);
 }
 function onLeave(){ if(S.eraserPos&&!drag) setEraserPos(null); if(S.hoverNote) setHoverNote(null); }
-on('#optEraser','change',e=>{S.eraser.size=+e.target.value;});
+/* 消しゴムの太さ: 細・中・太のボタン、または数値（マーカーの太さと同じ操作） */
+function setEraserSize(v){
+  v=Math.max(1,Math.min(200,+v||12)); S.eraser.size=v;
+  $('#optEraser').value=String(Math.round(v*10)/10);
+  $$('#optEraserSeg [data-ew]').forEach(b=>b.classList.toggle('active',+b.dataset.ew===v));
+  if(S.eraserPos) redrawPage(S.eraserPos.pid);   // 範囲を示す円の大きさも変える
+}
+$$('#optEraserSeg [data-ew]').forEach(b=>b.addEventListener('click',()=>setEraserSize(+b.dataset.ew)));
+on('#optEraser','input',e=>{if(e.target.value!=='') setEraserSize(e.target.value);});
+on('#optEraser','change',e=>setEraserSize(e.target.value));
+setEraserSize(S.eraser.size);
 on('#optEraseWhole','change',e=>{S.eraser.whole=e.target.checked;});
