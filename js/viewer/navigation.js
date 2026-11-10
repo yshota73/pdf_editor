@@ -156,7 +156,8 @@ let bgPan=null;
 viewBox.addEventListener('pointerdown',e=>{
   if(!hasDoc()||e.pointerType==='touch'||zg) return;
   const mid=e.button===1;
-  if(!mid&&(e.button!==0||e.target.closest('.pg,.empty'))) return;
+  // ツールを何も選んでいないときは、ページの上をドラッグしても動かせる
+  if(!mid&&(e.button!==0||e.target.closest(S.tool==='none'?'.empty':'.pg,.empty'))) return;
   e.preventDefault(); try{viewBox.setPointerCapture(e.pointerId);}catch(_){}
   bgPan={id:e.pointerId,x:e.clientX,y:e.clientY}; viewBox.classList.add('panning');
 });

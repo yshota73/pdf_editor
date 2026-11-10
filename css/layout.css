@@ -27,6 +27,7 @@
 .pg canvas{position:absolute;left:0;top:0;display:block}
 .pg .ov{cursor:default}
 #pages[data-tool="text"] .ov{cursor:text}
+#pages[data-tool="none"] .ov{cursor:grab}
 #pages[data-tool="highlight"] .ov,#pages[data-tool="rect"] .ov,#pages[data-tool="ellipse"] .ov,#pages[data-tool="line"] .ov,#pages[data-tool="pen"] .ov,#pages[data-tool="eraser"] .ov,#pages[data-tool="redact"] .ov,#pages[data-tool="place"] .ov{cursor:crosshair;touch-action:none}
 .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px}
 .empty-card{width:min(560px,100%);background:var(--panel);border:2px dashed var(--line);border-radius:14px;padding:32px 28px;text-align:center}

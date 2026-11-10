@@ -54,6 +54,7 @@ function onDown(ev,d){
   if(ev.button!==0) return;
   const pg=pageById(+d.dataset.pid); if(!pg) return;
   const idx=S.pages.indexOf(pg); if(idx!==S.cur) setCur(idx);
+  if(S.tool==='none'){ if(S.sel) select(null,null); return; }   // ツールなし: 選択を外すだけ（ドラッグはページの移動になる）
   const [x,y]=ptrBase(ev,d,pg); const tol=6/PXPT(); const t=S.tool;
   if(t==='select'){
     ev.preventDefault();
