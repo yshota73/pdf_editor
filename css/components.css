@@ -45,3 +45,16 @@
 .cpmore{display:flex;align-items:center;gap:8px;width:100%;margin-top:10px;padding:6px 6px;border:0;border-top:1px solid var(--line);background:transparent;cursor:pointer;color:var(--text);text-align:left;border-radius:0 0 6px 6px}
 .cpmore:hover{background:var(--panel2)}
 .cpwheel{width:16px;height:16px;border-radius:50%;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red)}
+/* その他の色（彩度・明るさの四角・色相のバー・16進数） */
+.cpsv,.cphue{position:relative;width:236px;border-radius:6px;cursor:crosshair;touch-action:none;outline-offset:2px}
+.cpsv{height:150px;background:linear-gradient(to top,#000,transparent),linear-gradient(to right,#fff,transparent),var(--hue,red)}
+.cphue{height:14px;margin-top:10px;background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)}
+.cpk{position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.5);pointer-events:none}
+.cphue .cpk{top:50%;background:transparent}
+.cprow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}
+.cpcmp{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.cpcmp span{width:30px;height:24px}
+.cphex{display:flex;align-items:center;gap:2px;color:var(--muted)}
+.cphex input{width:84px;height:26px;font-family:ui-monospace,monospace;text-transform:lowercase}
+.cpact{display:flex;justify-content:flex-end;gap:6px;margin-top:10px}
+.cpact .btn{height:28px;padding:0 12px;font-size:12px}

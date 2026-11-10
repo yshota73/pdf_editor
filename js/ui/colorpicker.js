@@ -63,24 +63,81 @@ function openColorPop(inp,btn){
   }
   const more=document.createElement('button'); more.type='button'; more.className='cpmore';
   more.innerHTML='<span class="cpwheel"></span>その他の色…';
-  more.addEventListener('click',()=>{   // ブラウザの色選択で自由に選ぶ
-    const t=cpTarget; closeColorPop(); if(!t) return;
-    t._cpNative=true; t._cpNativeUsed=true;
-    try{ if(t.showPicker){ t.showPicker(); } else t.click(); }catch(e){ t.click(); }
-    setTimeout(()=>{t._cpNative=false;},0);
-  });
+  // ブラウザの色選択（showPicker）は見えない入力欄からだと開かないことがある（iPad の Safari など）ので、パレットの中で選ぶ
+  more.addEventListener('click',()=>openCustomColor(inp,btn,cur));
   cpPop.append(more);
   document.body.append(cpPop);
+  cpPlace(btn);
+  const on=cpPop.querySelector('.cps.on')||cpPop.querySelector('.cps'); on&&on.focus();
+}
+function cpPlace(btn){
   const r=btn.getBoundingClientRect(), w=cpPop.offsetWidth, hh=cpPop.offsetHeight;
   cpPop.style.left=Math.max(4,Math.min(r.left,innerWidth-w-4))+'px';
   cpPop.style.top=(r.bottom+4+hh<=innerHeight?r.bottom+4:Math.max(4,r.top-hh-4))+'px';
-  const on=cpPop.querySelector('.cps.on')||cpPop.querySelector('.cps'); on&&on.focus();
 }
 function closeColorPop(){ cpPop.remove(); cpTarget=null; }
 document.addEventListener('pointerdown',e=>{ if(cpPop.isConnected&&!cpPop.contains(e.target)&&!e.target.closest('.cbtn')) closeColorPop(); },true);
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&cpPop.isConnected){ e.stopPropagation(); closeColorPop(); } },true);
-/* その他の色で選んだ色も「最近使った色」に入れる */
-document.addEventListener('change',e=>{ const t=e.target; if(t&&t._cp&&t._cpNativeUsed){ t._cpNativeUsed=false; cpRemember(t.value.toLowerCase()); } },true);
+
+/* ---- その他の色: 彩度・明るさの四角と色相のバーで自由に選ぶ（16進数でも入力できる） ---- */
+function hex2hsv(hex){
+  const n=parseInt(hex.slice(1),16), r=(n>>16&255)/255, g=(n>>8&255)/255, b=(n&255)/255;
+  const mx=Math.max(r,g,b), mn=Math.min(r,g,b), d=mx-mn;
+  let h=0;
+  if(d){ h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4; h*=60; if(h<0) h+=360; }
+  return [h,mx?d/mx:0,mx];
+}
+function hsv2hex(h,s,v){
+  const f=k=>{const x=(k+h/60)%6; return v-v*s*Math.max(0,Math.min(x,4-x,1));};
+  return '#'+[f(5),f(3),f(1)].map(c=>hex2(c*255)).join('');
+}
+function openCustomColor(inp,btn,cur){
+  const start=/^#[0-9a-f]{6}$/.test(cur)?cur:'#e60012';
+  let [h,s,v]=hex2hsv(start);
+  cpPop.replaceChildren();
+  cpPop.insertAdjacentHTML('beforeend',`
+    <div class="cph">その他の色</div>
+    <div class="cpsv" role="slider" aria-label="彩度と明るさ" tabindex="0"><span class="cpk"></span></div>
+    <div class="cphue" role="slider" aria-label="色相" aria-valuemin="0" aria-valuemax="360" tabindex="0"><span class="cpk"></span></div>
+    <div class="cprow">
+      <span class="cpcmp" title="左: 今の色 / 右: 新しい色"><span class="cpold"></span><span class="cpnew"></span></span>
+      <label class="cphex">#<input type="text" maxlength="7" spellcheck="false" autocomplete="off" aria-label="色の16進数"></label>
+    </div>
+    <div class="cpact"><button type="button" class="btn sm" data-a="back">戻る</button><button type="button" class="btn sm primary" data-a="ok">OK</button></div>`);
+  const sv=cpPop.querySelector('.cpsv'), svk=sv.firstElementChild, hue=cpPop.querySelector('.cphue'), huek=hue.firstElementChild;
+  const hexIn=cpPop.querySelector('.cphex input'), nw=cpPop.querySelector('.cpnew');
+  cpPop.querySelector('.cpold').style.background=start;
+  const paint=(fromHex)=>{
+    const hex=hsv2hex(h,s,v);
+    sv.style.setProperty('--hue',`hsl(${h} 100% 50%)`);
+    svk.style.left=s*100+'%'; svk.style.top=(1-v)*100+'%'; svk.style.background=hex;
+    huek.style.left=h/360*100+'%'; hue.setAttribute('aria-valuenow',Math.round(h));
+    nw.style.background=hex; if(!fromHex) hexIn.value=hex.slice(1);
+  };
+  const drag=(el,fn)=>{
+    const at=e=>{const r=el.getBoundingClientRect(); fn(Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),Math.max(0,Math.min(1,(e.clientY-r.top)/r.height))); paint();};
+    el.addEventListener('pointerdown',e=>{ e.preventDefault(); el.focus(); try{el.setPointerCapture(e.pointerId);}catch(_){} at(e); });
+    el.addEventListener('pointermove',e=>{ if(el.hasPointerCapture(e.pointerId)) at(e); });
+  };
+  drag(sv,(x,y)=>{s=x; v=1-y;});
+  drag(hue,x=>{h=Math.min(x*360,359.9);});
+  const key=(el,fn)=>el.addEventListener('keydown',e=>{
+    const st=e.shiftKey?.1:.02, d={ArrowLeft:[-st,0],ArrowRight:[st,0],ArrowUp:[0,-st],ArrowDown:[0,st]}[e.key];
+    if(!d) return; e.preventDefault(); fn(d[0],d[1]); paint();
+  });
+  key(sv,(dx,dy)=>{s=Math.max(0,Math.min(1,s+dx)); v=Math.max(0,Math.min(1,v-dy));});
+  key(hue,dx=>{h=Math.max(0,Math.min(359.9,h+dx*360));});
+  hexIn.addEventListener('input',()=>{
+    const t=hexIn.value.replace(/[^0-9a-f]/gi,'');
+    const m=t.length===3?t.replace(/./g,c=>c+c):t;
+    if(m.length===6){ [h,s,v]=hex2hsv('#'+m.toLowerCase()); paint(true); }
+  });
+  const ok=()=>{ const hex=hsv2hex(h,s,v), t=cpTarget; closeColorPop(); if(t) cpSet(t,hex); };
+  hexIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); ok(); } });
+  cpPop.querySelector('[data-a="ok"]').addEventListener('click',ok);
+  cpPop.querySelector('[data-a="back"]').addEventListener('click',()=>openColorPop(inp,btn));
+  paint(); cpPlace(btn); sv.focus();
+}
 
 /* ---- input[type=color] をボタンに置き換える ---- */
 const VALUE_DESC=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value');
@@ -93,7 +150,7 @@ function enhanceColorInput(inp){
   // プログラムから value を変えても見本の色が変わるようにする
   Object.defineProperty(inp,'value',{configurable:true,get(){return VALUE_DESC.get.call(this);},set(v){VALUE_DESC.set.call(this,v); paint();}});
   inp.addEventListener('input',paint);
-  inp.addEventListener('click',e=>{ if(inp._cpNative) return; e.preventDefault(); openColorPop(inp,btn); });   // ラベルの文字をクリックしたとき
+  inp.addEventListener('click',e=>{ e.preventDefault(); openColorPop(inp,btn); });   // ラベルの文字をクリックしたとき
   inp.classList.add('cp-native'); inp.tabIndex=-1;
   inp.after(btn); paint();
   btn.addEventListener('click',e=>{ e.preventDefault(); if(cpPop.isConnected&&cpTarget===inp){closeColorPop();return;} openColorPop(inp,btn); });
