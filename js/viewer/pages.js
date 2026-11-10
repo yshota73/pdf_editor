@@ -18,10 +18,10 @@ function makePageEl(pg){
   const base=document.createElement('canvas'), ov=document.createElement('canvas'); ov.className='ov';
   d.append(base,ov);
   d._base=base; d._ov=ov; d._key=`${pg.rot}|${S.zoom}`; d._active=false; d._tok=0; d._cs=1;
-  ov.addEventListener('pointerdown',ev=>{ if(!fingerBlocked(ev)) onDown(ev,d); });
-  ov.addEventListener('pointermove',ev=>{ if(!fingerBlocked(ev)) onMove(ev,d); });
-  ov.addEventListener('pointerup',ev=>{ if(!fingerBlocked(ev)) onUp(ev,d); });
-  ov.addEventListener('pointercancel',ev=>{ if(!fingerBlocked(ev)) onUp(ev,d); });
+  ov.addEventListener('pointerdown',ev=>{ if(fingerBlocked(ev)) fingerDown(ev,d); else onDown(ev,d); });
+  ov.addEventListener('pointermove',ev=>{ if(fingerBlocked(ev)) fingerMove(ev); else onMove(ev,d); });
+  ov.addEventListener('pointerup',ev=>{ if(fingerBlocked(ev)) fingerUp(ev); else onUp(ev,d); });
+  ov.addEventListener('pointercancel',ev=>{ if(fingerBlocked(ev)) fingerUp(ev); else onUp(ev,d); });
   ov.addEventListener('dblclick',ev=>onDbl(ev,d));
   ov.addEventListener('pointerleave',onLeave);
   io.observe(d);

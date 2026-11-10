@@ -8,13 +8,28 @@ let drag=null;
 const PEN_ONLY_TOOLS=new Set(['pen','highlight','eraser']);
 // iPadOS 13 以降の Safari は Mac として名乗るので、タッチ対応の「Mac」も iPad とみなす
 const IS_IPAD=/iPad/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-if(IS_IPAD) pagesBox.classList.add('pen-only');
+// ペンか指かは Pointer Events の pointerType で見分ける（'pen' / 'touch'）
 const fingerBlocked=ev=>IS_IPAD&&ev.pointerType==='touch'&&PEN_ONLY_TOOLS.has(S.tool);
-// iPad の Safari ではペンで動かしてもスクロールが起きるので、ペンの接触だけスクロールを止める（指のスクロールはそのまま）
-pagesBox.addEventListener('touchstart',e=>{
-  if(!IS_IPAD||!PEN_ONLY_TOOLS.has(S.tool)||!e.target.closest('.ov')) return;
-  if([...e.changedTouches].some(t=>t.touchType==='stylus')) e.preventDefault();
-},{passive:false});
+/* これらのツールは touch-action:none のまま（ペンでスクロールが起きないように）なので、
+   指でなぞったときのスクロールは pointermove から自分で動かす */
+let fingerPan=null;
+const touchIds=new Set();   // 画面に触れている指の pointerId
+function fingerDown(ev,d){
+  touchIds.add(ev.pointerId);
+  if(touchIds.size>1){ fingerPan=null; return; }   // 2本目の指: ピンチでの拡大縮小に任せる
+  try{d._ov.setPointerCapture(ev.pointerId);}catch(_){}
+  fingerPan={id:ev.pointerId,x:ev.clientX,y:ev.clientY};
+}
+function fingerMove(ev){
+  if(!fingerPan||ev.pointerId!==fingerPan.id||zg) return;
+  const dx=ev.clientX-fingerPan.x, dy=ev.clientY-fingerPan.y; fingerPan.x=ev.clientX; fingerPan.y=ev.clientY;
+  if(fitsX()) panX(dx); else viewBox.scrollLeft-=dx;
+  viewBox.scrollTop-=dy;
+}
+function fingerUp(ev){
+  touchIds.delete(ev.pointerId);
+  if(fingerPan&&fingerPan.id===ev.pointerId) fingerPan=null;
+}
 function ptrBase(ev,d,pg){
   const r=d._ov.getBoundingClientRect(); const px=PXPT();
   return d2b(pg,(ev.clientX-r.left)/px,(ev.clientY-r.top)/px);
