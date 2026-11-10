@@ -196,15 +196,49 @@ async function saveText(filename,text,type){
   try{ await downloadBytes(filename,new TextEncoder().encode(text),type); toast(`保存しました: ${filename}`,'ok'); }
   catch(e){ if(e&&e.code==='declined') toast('保存をキャンセルしました'); else toast('保存できませんでした: '+(e&&(e.message||e.code)||e),'err',6000); }
 }
-async function saveDoc(list,suffix,full){
+/* ---- 保存先の確認: ファイル名を確かめてから、保存する場所を選ぶ ----
+   Chrome / Edge などは OS の「名前を付けて保存」画面で場所を選べる（File System Access API）。
+   選べないブラウザ（Safari・Firefox など）は、ブラウザのダウンロード先に保存する */
+const canPickFile=()=>typeof window.showSaveFilePicker==='function'&&window.self===window.top;
+async function askSaveTarget(filename,desc){
+  const pick=canPickFile();
+  const f=document.createElement('div'); f.className='fm';
+  f.innerHTML=`<p class="muted"></p>
+    <label for="svName">ファイル名</label><div class="row"><input type="text" id="svName" spellcheck="false" autocomplete="off" style="flex:1"> .pdf</div>
+    <label>保存先</label><div>${pick?'次の画面で、保存する場所を選べます':'ブラウザのダウンロード先（通常は「ダウンロード」フォルダ）'}</div>`;
+  f.querySelector('.muted').textContent=desc;
+  const inp=f.querySelector('#svName'); inp.value=filename.replace(/\.pdf$/i,'');
+  const r=await modal({title:'保存先の確認',body:f,
+    buttons:[{label:'キャンセル',value:null},{label:pick?'保存先を選ぶ…':'保存',primary:true,value:'ok'}],
+    onOpen:(b,close)=>{ setTimeout(()=>{inp.focus();inp.select();},30);
+      inp.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.isComposing){ e.preventDefault(); close('ok'); } }); }});
+  if(r!=='ok') return null;
+  const name=(inp.value.trim().replace(/[\\/:*?"<>|]/g,'_')||baseName()||'document')+'.pdf';
+  const viaDownload={name,write:b=>downloadBytes(name,b,'application/pdf')};
+  if(!pick) return viaDownload;
+  try{
+    const h=await window.showSaveFilePicker({suggestedName:name,types:[{description:'PDF ファイル',accept:{'application/pdf':['.pdf']}}]});
+    return {name:h.name,write:async b=>{ const w=await h.createWritable(); await w.write(b); await w.close(); }};
+  }catch(e){
+    if(e&&e.name==='AbortError') return null;   // 場所を選ぶ画面でキャンセル
+    console.warn('showSaveFilePicker',e); return viaDownload;   // 使えない環境ではダウンロードで保存する
+  }
+}
+async function saveDoc(list,suffix,full,ask=true){   // ask=false: 確認せずダウンロード先に保存（分割保存で使う）
   if(!libsOk||!list.length) return;
+  // 場所を選ぶ画面はクリック直後でないと開けないので、PDFを作る前に保存先を決める
+  const fn=`${baseName()}${suffix}.pdf`;
+  const target=ask?await askSaveTarget(fn,
+    full?`編集したPDF（全${list.length}ページ）を保存します。`:`選んだ ${list.length} ページを、別のPDFとして保存します。`)
+    :{name:fn,write:b=>downloadBytes(fn,b,'application/pdf')};
+  if(!target) return;
   busy('PDFを生成中…'); let res;
   try{ res=await buildPdf(list,(n,t)=>busy(`PDFを生成中… ${n}/${t}`)); }
   catch(e){console.error(e);busy(false);const m=String(e&&e.message||e);toast(/encrypt/i.test(m)?'暗号化(パスワード設定)されたPDFは保存できません。β版では未対応です':'PDFの生成に失敗しました: '+m,'err',7000);return;}
   busy(false);
-  const filename=`${baseName()}${suffix}.pdf`;
+  const filename=target.name;
   try{
-    await downloadBytes(filename,res.bytes,'application/pdf');
+    await target.write(res.bytes);
     if(full){S.dirty=false;updateUI();}
     toast(res.baked?`保存しました（墨消しを含む${res.baked}ページは画像化されています）`:`保存しました: ${filename}`,'ok',5000);
   }catch(e){

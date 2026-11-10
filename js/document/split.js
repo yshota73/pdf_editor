@@ -38,6 +38,6 @@ async function splitDialog(){
   }
   for(let k=0;k<groups.length;k++){
     const gr=groups[k], sfx=gr.name?`_${gr.name.replace(/[\\/:*?"<>|]/g,'_')}`:`_${String(k+1).padStart(2,'0')}`;
-    await saveDoc(gr.pages.map(i=>S.pages[i]),sfx,false);
+    await saveDoc(gr.pages.map(i=>S.pages[i]),sfx,false,false);   // 何個も続けて保存するので、1つずつは確認しない
   }
 }
