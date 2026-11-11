@@ -35,10 +35,7 @@ document.addEventListener('keydown',e=>{
     }
   }
   const a=getSel();
-  if(a&&(e.key==='Delete'||e.key==='Backspace')){
-    e.preventDefault(); const pg=pageById(S.sel.pid); pg.annots=pg.annots.filter(q=>q.id!==a.id);
-    const pid=pg.id; select(null,null); redrawPage(pid); commit(); return;
-  }
+  if(a&&(e.key==='Delete'||e.key==='Backspace')){ e.preventDefault(); deleteSel(); return; }
   if(a&&e.key.startsWith('Arrow')){
     e.preventDefault(); const st=e.shiftKey?10:1; const pg=pageById(S.sel.pid);
     const dd=e.key==='ArrowLeft'?[-st,0]:e.key==='ArrowRight'?[st,0]:e.key==='ArrowUp'?[0,-st]:[0,st];

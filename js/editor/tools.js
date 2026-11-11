@@ -20,14 +20,14 @@ const HINTS={
   lasso:'注釈を自由に囲んで選びます。ドラッグで移動、上に出るボタンで複製・コピー・切り取り・削除（PDFにもとからある文字や画像は動かせません）',
   textsel:'ドラッグで文字を選択し、Ctrl+C でコピー（ダブルクリックで1語、トリプルクリックで1行）',
   text:'入力中もツールバーで色・大きさを変更できます。Esc かボックスの外をクリックで確定。書いたテキストはダブルクリックで編集',
-  redact:'ドラッグで続けて墨消しできます。保存時、対象ページは画像化され下の文字も完全に削除されます',
+  redact:'ドラッグで続けて墨消しできます。保存時、対象ページは画像化され下の文字も完全に削除されます。取り消すには選択ツールで選んで「削除」、または消しゴムでなぞります',
   place:'配置したい位置をクリック。続けてクリックすると同じものを配置できます（Escで終了）',
   image:'ドラッグで移動、四隅で拡大縮小',
   strike:'削除する文字の上をドラッグ（縦組みは縦にドラッグ）。ダブルクリックで指示文を変更',
   replace:'直したい文字の上をドラッグし、正しい文字を入力',
   insert:'挿入位置をクリックし、入れる文字を入力（縦組みは「縦組み」をオン）',
   note:'クリックで付箋を貼る / 付箋にマウスを重ねるとコメントを表示 / 付箋をダブルクリックで編集',
-  eraser:'手書きの線をなぞった部分を消します（「線ごと」をオンにすると触れた線をまとめて消去）'
+  eraser:'手書きの線をなぞった部分を消します（「線ごと」をオンにすると触れた線をまとめて消去）。墨消しは触れると丸ごと消えます'
 };
 function syncOptions(){
   const t=activeType(), a=getSel();
@@ -45,7 +45,15 @@ function syncOptions(){
   const ta=(a&&a.type==='text')?a:null;
   for(const [id,k] of TEXT_STYLES){ const v=ta?!!ta[k]:S.textStyle[k]; $(id).classList.toggle('active',v); $(id).setAttribute('aria-pressed',String(v)); }
   $('#optShowNotes').checked=S.showNotes;
+  $('#btnDelSel').classList.toggle('on',!!a);   // 注釈を選んでいる間だけ「削除」ボタンを出す（キーボードのない iPad でも消せるように）
 }
+/* 選んでいる注釈を削除する（墨消しもこれで取り消せる） */
+function deleteSel(){
+  const a=getSel(); if(!a) return false;
+  const pg=pageById(S.sel.pid); pg.annots=pg.annots.filter(q=>q.id!==a.id);
+  const pid=pg.id; select(null,null); redrawPage(pid); commit(); return true;
+}
+on('#btnDelSel','click',deleteSel);
 function setTool(t){
   if(S.editing) finishInlineText();
   // 「テキスト」はボタンを押した時に空のボックスを置くだけで、ツールは「選択」に戻す（ボックスの中をクリックすると入力できる）

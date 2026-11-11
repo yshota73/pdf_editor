@@ -7,6 +7,10 @@
 function eraseAlong(pg,x0,y0,x1,y1){
   const r=S.eraser.size/2; let changed=false; const out=[];
   for(const a of pg.annots){
+    if(a.type==='redact'){   // 墨消し: 消しゴムが触れたら丸ごと消す
+      if(distRectSeg(a,r,x0,y0,x1,y1)){changed=true; if(S.sel&&S.sel.aid===a.id) S.sel=null;} else out.push(a);
+      continue;
+    }
     if(a.type!=='pen'&&a.type!=='marker'){out.push(a);continue;}
     const re=r+a.lw/2, b=bboxOf(a);
     if(Math.max(x0,x1)<b.x-re||Math.min(x0,x1)>b.x+b.w+re||Math.max(y0,y1)<b.y-re||Math.min(y0,y1)>b.y+b.h+re){out.push(a);continue;}
@@ -17,6 +21,16 @@ function eraseAlong(pg,x0,y0,x1,y1){
   }
   if(changed) pg.annots=out;
   return changed;
+}
+/* 消しゴムの軌跡 (x0,y0)→(x1,y1)（半径 r）が四角 a に触れているか */
+function distRectSeg(a,r,x0,y0,x1,y1){
+  const n=Math.max(1,Math.ceil(Math.hypot(x1-x0,y1-y0)/Math.max(.5,r/2)));
+  for(let k=0;k<=n;k++){
+    const ex=x0+(x1-x0)*k/n, ey=y0+(y1-y0)*k/n;
+    const dx=Math.max(a.x-ex,0,ex-(a.x+a.w)), dy=Math.max(a.y-ey,0,ey-(a.y+a.h));
+    if(Math.hypot(dx,dy)<=r) return true;
+  }
+  return false;
 }
 /* 線ごと消す: 線のどこかが消しゴムに触れたら丸ごと削除 */
 function eraseWhole(a,re,x0,y0,x1,y1){
