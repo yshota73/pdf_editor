@@ -30,35 +30,6 @@ function fingerUp(ev){
   touchIds.delete(ev.pointerId);
   if(fingerPan&&fingerPan.id===ev.pointerId) fingerPan=null;
 }
-/* ---- iPad だけの仕様: ペン先で同じ場所を素早く2回タップすると、手書き⇔消しゴムを切り替える ----
-   （Apple Pencil 本体のダブルタップは Safari には届かないので、画面へのタップで代わりにする）
-   2回のタップで描いた点や消した線は、なかったことにして元に戻す */
-const TAP_MS=300, TAP_MOVE=6, DTAP_MS=350, DTAP_DIST=24;   // 1回のタップの長さ(ms)・動き(px) / 2回の間隔(ms)・距離(px)
-const isPenToggle=ev=>IS_IPAD&&ev.pointerType==='pen'&&(S.tool==='pen'||S.tool==='eraser');
-let penTap=null, lastPenTap=null;
-function penTapDown(ev,pg){
-  penTap=isPenToggle(ev)?{t:performance.now(),x:ev.clientX,y:ev.clientY,pid:pg.id,tool:S.tool,
-    annots:JSON.stringify(pg.annots),top:S.hist[S.hpos],dirty:S.dirty,moved:false}:null;
-}
-function penTapMove(ev){
-  if(penTap&&Math.hypot(ev.clientX-penTap.x,ev.clientY-penTap.y)>TAP_MOVE) penTap.moved=true;
-}
-function penTapUp(ev){
-  const tp=penTap; penTap=null;
-  if(!tp||ev.pointerType!=='pen'||ev.type!=='pointerup'||tp.moved||performance.now()-tp.t>TAP_MS){ lastPenTap=null; return; }
-  const lt=lastPenTap;
-  if(!(lt&&lt.pid===tp.pid&&lt.tool===tp.tool&&tp.t-lt.up<DTAP_MS&&Math.hypot(tp.x-lt.x,tp.y-lt.y)<DTAP_DIST)){
-    tp.up=performance.now(); lastPenTap=tp; return;
-  }
-  lastPenTap=null;
-  // 1回目のタップの前の状態に戻す（ページの注釈と履歴の両方）
-  const pg=pageById(lt.pid); if(pg) pg.annots=JSON.parse(lt.annots);
-  const i=S.hist.lastIndexOf(lt.top); if(i>=0){ S.hist.length=i+1; S.hpos=i; }
-  S.dirty=lt.dirty;
-  setTool(lt.tool==='pen'?'eraser':'pen');
-  redrawPage(lt.pid); updateUI(); refreshPanel();
-  setStatus(S.tool==='pen'?'手書きに切り替えました（ペン先で2回タップ）':'消しゴムに切り替えました（ペン先で2回タップ）');
-}
 function ptrBase(ev,d,pg){
   const r=d._ov.getBoundingClientRect(); const px=PXPT();
   return d2b(pg,(ev.clientX-r.left)/px,(ev.clientY-r.top)/px);
@@ -84,7 +55,6 @@ function onDown(ev,d){
   const pg=pageById(+d.dataset.pid); if(!pg) return;
   const idx=S.pages.indexOf(pg); if(idx!==S.cur) setCur(idx);
   if(S.tool==='none'){ if(S.sel) select(null,null); return; }   // ツールなし: 選択を外すだけ（ドラッグはページの移動になる）
-  penTapDown(ev,pg);
   const [x,y]=ptrBase(ev,d,pg); const tol=6/PXPT(); const t=S.tool;
   if(t==='select'){
     ev.preventDefault();
@@ -162,7 +132,6 @@ function setHoverNote(pg,x,y){
 }
 function onMove(ev,d){
   const pg=pageById(+d.dataset.pid); if(!pg) return;
-  penTapMove(ev);
   if(!drag){ const [hx,hy]=ptrBase(ev,d,pg); setHoverNote(pg,hx,hy); if(S.hoverNote&&S.tool!=='select') return; }
   if(!drag){
     if(S.tool==='select'){
@@ -210,8 +179,7 @@ function onMove(ev,d){
   }
   drawOverlay(d,pg);
 }
-function onUp(ev,d){ endDrag(ev,d); penTapUp(ev); }
-function endDrag(ev,d){
+function onUp(ev,d){
   if(!drag) return;
   const dr=drag; drag=null; clearTimeout(dr.holdT);
   try{d._ov.releasePointerCapture(ev.pointerId);}catch(e){}
